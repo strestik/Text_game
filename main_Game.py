@@ -10,11 +10,11 @@ class Character:
         self.name = name
         self.char_class = ["Monster", "Sorccer", "Archerer", "Witcher", "Jarl", "Bard"][char_class]
         self.hp = 100
-        self.stamina = 0
-        self.mana = 100 if self.char_class == "Sorccer" else 40 if self.char_class == "Witcher" else 0
+        self.stamina = 100
+        self.mana = 0
         self.defense = 70
         self.skill = 1.2  # dmg multiplier
-        self.respect = 100 if self.char_class == "Bard" else 15
+        self.respect = 15
         self.abilities = []
 
         self.effects = {"burning": False, "poisoned": False, "stunned": False, "frozen": False, "bleeding": False}
@@ -72,7 +72,7 @@ class Character:
     def monster(self):
         self.hp = 160
         self.stamina = 100
-        self.mana = None
+        self.mana = 0
         self.char_class = "Monster"
         self.abilities = ["Claw Swipe", "Bite", "Roar"]
     
@@ -189,21 +189,6 @@ jm4 = Character("Triss", 1)
 jm5 = Character("Jestřáb", 2)
 
 enemy = Character("Monster", 0)  # Example enemy character
-# Example usage
-
-# if Hero.char_class == "Witcher":
-#     Hero.witcher()
-
-# elif Hero.char_class == "Jarl":
-#     Hero.jarl()
-# elif Hero.char_class == "Bard":  
-#     Hero.bard()
-# elif Hero.char_class == "Monster":
-#     Hero.monster()
-# elif Hero.char_class == "Sorccer":
-#     Hero.sorccer()
-# elif Hero.char_class == "Archerer":
-#     Hero.archerer()
 
 
 # print(Hero.name, Hero.char_class, Hero.hp, Hero.stamina, Hero.mana, Hero.defense, Hero.skill, Hero.respect)
