@@ -21,7 +21,13 @@ class Character:
         self.elixiers = {
             "healing potion": False,
             "stamina potion": False,
-            "mana potion": False,}
+            "mana potion": False, 
+            "vlaštovka": False, # duration healing
+            "hrom": False, # dmg multiplier
+            "vlk": False, # sklill multiplier
+            "medvěd": False, # defense multiplier
+            "blizzard": False, # stamina regen
+            }
         self.items = {
             "crossbow": False,
             "sword": False,
@@ -36,6 +42,8 @@ class Character:
         self.hp = 150
         self.stamina = 100
         self.mana = 40
+        self.defense = 80
+        self.skill = 1.5  # dmg multiplier
         self.char_class = "Witcher"
         self.abilities = ["Silver Sword", "Steel Sword"]
         # self.signs = sign()
@@ -44,6 +52,8 @@ class Character:
         self.hp = 110
         self.stamina = 40
         self.mana = 100
+        self.defense = 50
+        self.skill = 1.4
         self.char_class = "Sorccer"
         self.abilities = ["Fireball", "Ice Spike", "Lightning Bolt"]
         # self.signs = sign()
@@ -52,6 +62,8 @@ class Character:
         self.hp = 130
         self.stamina = 100
         self.mana = 0
+        self.defense = 60
+        self.skill = 1.3
         self.char_class = "Archerer"
         self.abilities = ["Arrow Rain", "Poison Arrow", "Explosive Arrow"]
         
@@ -59,6 +71,8 @@ class Character:
         self.hp = 170
         self.stamina = 100
         self.mana = 0
+        self.defense = 90
+        self.skill = 1.1
         self.char_class = "Jarl"
         self.abilities = ["War Cry", "Shield Bash", "Battle Roar"]
     
@@ -66,6 +80,9 @@ class Character:
         self.hp = 120
         self.stamina = 80
         self.mana = 0
+        self.defense = 40
+        self.skill = 1.2
+        self.respect = 50
         self.char_class = "Bard"
         self.abilities = ["Song of Healing", "Inspiring Melody", "Lullaby"]
 
@@ -73,6 +90,8 @@ class Character:
         self.hp = 160
         self.stamina = 100
         self.mana = 0
+        self.defense = 70
+        self.skill = 1.3
         self.char_class = "Monster"
         self.abilities = ["Claw Swipe", "Bite", "Roar"]
     
@@ -211,8 +230,15 @@ while alive:
     print(f"Vyber si svou třídu:\n")
     Hero.classing()
     print(f"\n---> Tvoje postava je {Hero.name}, třída: {Hero.char_class}, HP: {Hero.hp}, Stamina: {Hero.stamina}, Mana: {Hero.mana}, Defense: {Hero.defense}, Skill: {Hero.skill}, Respect: {Hero.respect}\n")
-    print("Nyní můžeš začít hrát. Zde jsou dostupné akce:")
-    
-   
-
-    action = input("Choose an action: ").strip().lower()
+    time.sleep(1)
+    print(f"\nNyní můžeš začít hrát. Tvým úkolem je přežít a porazit nepřítele.\n")
+    time.sleep(2)
+    print("Zde jsou dostupné akce: \n"
+          "1. Ůtočení\n"
+          "2. Elixíry\n"
+          "3. Nástroje\n"
+          "4. Zkontroluj svůj stav\n"
+          "5. a\n"
+          "6. Exit Game\n")
+    action = input("Vyber si: ").strip().lower()
+    print(f"\n --->")
