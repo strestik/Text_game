@@ -46,6 +46,7 @@ class Character:
         self.skill = 1.5  # dmg multiplier
         self.char_class = "Witcher"
         self.abilities = ["Silver Sword", "Steel Sword"]
+        self.equip = []
         # self.signs = sign()
 
     def sorccer(self):
@@ -216,29 +217,54 @@ enemy = Character("Monster", 0)  # Example enemy character
 # print(jm4.name, jm4.char_class, jm4.hp, jm4.stamina, jm4.mana, jm4.defense, jm4.skill, jm4.respect)
 # print(jm5.name, jm5.char_class, jm5.hp, jm5.stamina, jm5.mana, jm5.defense, jm5.skill, jm5.respect)
 
+Hero = Character("Hero", 0)  # Initialize Hero character
+Hero.witcher()
+# print(f"\nVýtej hráč, vyber si svou postavu:")
+# Hero.nameing()
+# print("\n--> Hmm", end='', flush=True)
+# for _ in range(4):
+#     time.sleep(0.3)
+#     print('.', end='', flush=True)
+# print(f" {Hero.name}, to je dobré jméno! Vítej!!!\n")
+# time.sleep(3.5)
+# print(f"Vyber si svou třídu:\n")
+# Hero.classing()
+print(f"\n---> Tvoje postava je {Hero.name}, třída: {Hero.char_class}, HP: {Hero.hp}, Stamina: {Hero.stamina}, Mana: {Hero.mana}, Defense: {Hero.defense}, Skill: {Hero.skill}, Respect: {Hero.respect}\n")
+# time.sleep(1)
+# print(f"\nNyní můžeš začít hrát. Tvým úkolem je přežít a porazit nepřítele.\n") 
+# time.sleep(2)
+# print("Boj začínáš bez vybavení a vylepšení, jestli chceš použít meč nebo vypít lektvar, musíš na to využít kolo.\n")
+# time.sleep(2)
+# print("Ale neměj strách, protivník se připravuje, takže první tři kola na tebe nezaútočí.")
+# time.sleep(2)
+
+
 
 while alive:
-    Hero = Character("Hero", 0)  # Initialize Hero character
-    print(f"\nVýtej hráč, vyber si svou postavu:")
-    Hero.nameing()
-    print("\n--> Hmm", end='', flush=True)
-    for _ in range(4):
-        time.sleep(0.3)
-        print('.', end='', flush=True)
-    print(f" {Hero.name}, to je dobré jméno! Vítej!!!\n")
-    time.sleep(3.5)
-    print(f"Vyber si svou třídu:\n")
-    Hero.classing()
-    print(f"\n---> Tvoje postava je {Hero.name}, třída: {Hero.char_class}, HP: {Hero.hp}, Stamina: {Hero.stamina}, Mana: {Hero.mana}, Defense: {Hero.defense}, Skill: {Hero.skill}, Respect: {Hero.respect}\n")
-    time.sleep(1)
-    print(f"\nNyní můžeš začít hrát. Tvým úkolem je přežít a porazit nepřítele.\n")
-    time.sleep(2)
-    print("Zde jsou dostupné akce: \n"
+    print("\nZde jsou dostupné akce: \n"
           "1. Ůtočení\n"
           "2. Elixíry\n"
           "3. Nástroje\n"
           "4. Zkontroluj svůj stav\n"
-          "5. a\n"
-          "6. Exit Game\n")
+          "5. Exit Game\n"
+          "6. a\n")
     action = input("Vyber si: ").strip().lower()
-    print(f"\n --->")
+    if action.isdigit():
+        action = int(action)
+        if action == 1 :
+            print(f"Vyber si svůj útok: \n")
+            for x in range(len(Hero.items)):
+                print(f"\n{x + 1}. {list(Hero.items.values())[x]}")
+
+        elif action == 2:
+            pass
+        elif action == 3:
+            pass
+        elif action == 4:
+            pass 
+        elif action == 5:
+            pass
+        else:
+            print("Něco jsi zadal špatně. Opakuj.")
+    else:
+        print("\nNapiš číslo úkonu.")
