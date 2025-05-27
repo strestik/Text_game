@@ -254,7 +254,7 @@ while alive:
         if action == 1 :
             print(f"Vyber si svůj útok: \n")
             for x in range(len(Hero.items)):
-                print(f"\n{x + 1}. {list(Hero.items.values())[x]}")
+                print(f"{x + 1}. {list(Hero.items.values())[x]}")
 
         elif action == 2:
             pass
