@@ -27,7 +27,7 @@ class Character:
             "medvěd": False, # defense multiplier
             "blizzard": False, # stamina regen
             }
-        self.items = {
+        self.equip = {
             "crossbow": False,
             "sword": False,
             "axe": False,
@@ -109,14 +109,13 @@ class Witcher(Character):
         self.abilities = ["Silver Sword", "Steel Sword"]
 
     def sign(self):
-            self.signs = {
-                "Igni": {"burning": True,
-                        "dmg": 20,},
-                "Aard": "Wind",
-                "Quen": "Shield",
-                "Axii": "Mind Control",
-                "Yrden": "Trap"
-            }
+        self.signs = {
+            "Igni": "burning 3 rounds",
+            "Aard": "stunned 1 round",
+            "Quen": "giant def 1 round ",
+            "Axii": "mana + 20",
+            "Yrden": "skill +",
+            "Heliotrop": "def +"}
 
 class Sorcerer(Character):
     def __init__(self, name):
@@ -216,22 +215,43 @@ while alive:
           "4. Zkontroluj svůj stav\n"
           "5. Exit Game\n"
           "6. a\n")
+    
     action = input("Vyber si: ").strip().lower()
     if action.isdigit():
         action = int(action)
         if action == 1 :
             print(f"Vyber si svůj útok: \n")
-            for x in range(len(Hero.items)):
-                print(f"{x + 1}. {list(Hero.items.values())[x]}")
+            if Hero.char_class == "Sorcerer" :
+                print(f"Jako mág můžeš používat jen magii.")
+                pass
+            else:
+                for idx, (item, owned) in enumerate(Hero.equip.items(), 1):
+                    print(f"{idx}. {item} - {'Máš' if owned else 'Nemáš'}")
+                    print("")
+
+                if Hero.char_class == "Witcher" :
+                    print(f"Jako zklínač můžeš používat i znamení.")
+                    pass
 
         elif action == 2:
-            pass
+            
+                pass
+
         elif action == 3:
             pass
+
         elif action == 4:
-            pass 
+            print(f"\n{Hero.name} - stav postavy:")
+            print(f"HP: {Hero.hp}")
+            print(f"Stamina: {Hero.stamina}")
+            print(f"Mana: {Hero.mana}")
+            print(f"Defense: {Hero.defense}")
+            print(f"Abilities: {', '.join(Hero.abilities)}")
+
         elif action == 5:
-            pass
+            print("Díky za hraní! Nashledanou.\n")
+            break
+
         else:
             print("Něco jsi zadal špatně. Opakuj.")
     else:
