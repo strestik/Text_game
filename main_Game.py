@@ -10,7 +10,7 @@ class Attack:
         self.base_dmg = base_dmg
         self.dmg_type = dmg_type
         self.effects = effects or []
-        self.multiplier = attacker.skill  # vynásobíme dovedností, možnist přidání multiplieru z vybavení
+        self.multiplier = Hero.skill  # vynásobíme dovedností, možnist přidání multiplieru z vybavení
 
     def calculate_damage(self):
         return int(self.base_dmg * self.multiplier)
@@ -65,8 +65,9 @@ class Character:
             self.effects[effect] = True
             print(f"{self.name} je nyní ovlivněn efektem: {effect}.")
         
-        self.apply_effects(Enemy)
+        self.apply_effects()
         self.is_alive_check()
+
 
     def apply_effects(self):    # možnost přidání časiového omezení efektů
         if self.effects.get("bleeding"):
@@ -86,7 +87,7 @@ class Character:
             #časový limit pro zmrazení, např. 1 partly stunned
         else:
             pass
-        self.is_alive_check()
+        # self.is_alive_check()
 
     # def potion(self, potion_type):
     #     pass
@@ -150,78 +151,82 @@ class Witcher(Character):
         super().__init__(name, "Witcher")
         self.hp = 150
         self.stamina = 100
-        self.mana = 40
-        self.defense = 80
+        self.mana = 35
+        self.defense = 30
         self.skill = 1.5
         self.abilities = ["Silver Sword", "Steel Sword"]
         self.signs = {
-            "Igni": "burning 3 rounds", # 
-            "Aard": "stunned 1 round",
-            "Quen": "giant def 1 round ",
-            "Axii": "mana + 20",
-            "Yrden": "skill +",
-            "Heliotrop": "def +"}
+            "Igni": "Ohnivý útok; 30 dmg a hoření za 15",               # burning 3 rounds
+            "Aard": "Magické odhození; 20 dmg a stun na 1 kolo",        # stunned 1 round
+            "Quen": "Kouzelná zeď; zvýší def o 30 na 1 kolo",           # giant def 1 round 
+            "Axii": "Proud síly; doplní 20 many",                       # mana + 20 
+            "Yrden": "Magické posílení; zlepší útoky o 10%",            # skill +
+            "Heliotrop": "Kouzelný štít; zlepší pernamentně def o 10"}  # def +
         
     def steel_sword(self, target):
         steel_sword_attack = Attack(self, "Steel Sword", base_dmg=35, dmg_type="slash", effects=["bleeding"])
-        target.take_damage(steel_sword_attack)
+        Enemy.take_damage(steel_sword_attack)
 
         
     def silver_sword(self, target):
-        silver_sword_attack = Attack(self, "Silver Sword", base_dmg= 45, dmg_type="slash", effects=["bleeding"])  # silver sword is more effective against monsters 45 if enemy.char_class == "Monster" else 30
-        target.take_damage(silver_sword_attack)
+        base = 45 if Enemy.char_class == "Monster" else 30
+        silver_sword_attack = Attack(self, "Silver Sword", base_dmg= base, dmg_type="slash", effects=["bleeding"])  # silver sword is more effective against monsters 45 if enemy.char_class == "Monster" else 30
+        Enemy.take_damage(silver_sword_attack)
+
+    
 
     def use_sign(self, target):
         while True:
-            sign_choice = input("Vyber si znamení (napiš pořadí): ").strip().lower()
+            sign_choice = input("Vyber si znamení (|x| - napiš x): ").strip()
             
             if sign_choice.isdigit():
                 sign_choice = int(sign_choice)
 
-                if sign_choice < 1 or sign_choice > len(self.signs):
+                if sign_choice < 11 or sign_choice > len(self.signs) + 10:
                     print("Neplatné číslo znamení. Zkus to znovu.")
                     continue
 
-                if self.mana < 10:
+                if not sign_choice == 14 and self.mana < 10:
                     print("Nemáš dost many na použití znamení.")
                     break
 
-                # if sign_choice in self.signs:
-                if sign_choice == 1:
-                    print(f"{self.name} použil znamení Igni a zapálil nepřítele.")
+                if sign_choice == 11:
+                    print(f"\n{self.name} použil znamení Igni a zapálil nepřítele.")
+                    time.sleep(1)
                     igni_attack = Attack(Hero, "Igni", base_dmg=30, dmg_type="fire", effects=["burning"])
                     self.mana -= 10  # Reduce mana for using the sign
-                    target.take_damage(igni_attack)
+                    time.sleep(1)
+                    Enemy.take_damage(igni_attack)
                     break
                 
-                elif sign_choice == 2:
-                    print(f"{self.name} použil znamení Aard a omráčil nepřítele.")
+                elif sign_choice == 12:
+                    print(f"\n{self.name} použil znamení Aard a omráčil nepřítele.")
                     aard_attack = Attack(Hero, "Aard", base_dmg=20, dmg_type="stun", effects=["stunned"])
                     self.mana -= 10  
-                    target.take_damage(aard_attack)
+                    Enemy.take_damage(aard_attack)
                     break
                 
-                elif sign_choice == 3:
-                    print(f"{self.name} použil znamení Quen a zvýšil svou obranu.")
-                    self.defense += 20
-                    self.mana -= 10  
+                elif sign_choice == 13:
+                    self.defense += 30
+                    self.mana -= 10
+                    print(f"\n{self.name} použil znamení Quen a zvýšil svou obranu na {self.defense}.")  
                     break
                 
-                elif sign_choice == 4:
-                    print(f"{self.name} použil znamení Axii a získal 20 many.")
+                elif sign_choice == 14:
+                    print(f"\n{self.name} použil znamení Axii a získal 20 many.")
                     self.mana = min(self.mana + 20, 100)  # Ensure mana does not exceed max
                     break
                 
-                elif sign_choice == 5:
-                    print(f"{self.name} použil znamení Yrden a zvýšil svou dovednost.")
+                elif sign_choice == 15:
                     self.skill += 0.1
                     self.mana -= 10  
+                    print(f"\n{self.name} použil znamení Yrden a zvýšil svou dovednost na {self.skill * 100:.0f}%.")
                     break
                     
-                elif sign_choice == 6:
-                    print(f"{self.name} použil znamení Heliotrop a zvýšil svou obranu.")
+                elif sign_choice == 16:
                     self.defense += 10
                     self.mana -= 10 
+                    print(f"\n{self.name} použil znamení Heliotrop a zvýšil svou obranu na {self.defense}.")
                     break
                         
                 else:
@@ -242,7 +247,7 @@ class Sorcerer(Character):
         self.hp = 110
         self.stamina = 40
         self.mana = 100
-        self.defense = 50
+        self.defense = 20
         self.skill = 1.4
         self.abilities = ["Fireball", "Ice Spike", "Lightning Bolt"]
 
@@ -260,7 +265,7 @@ class Archer(Character):
         self.hp = 130
         self.stamina = 100
         self.mana = 0
-        self.defense = 60
+        self.defense = 25
         self.skill = 1.3
         self.abilities = ["Arrow Rain", "Poison Arrow", "Explosive Arrow"]
 
@@ -270,7 +275,7 @@ class Jarl(Character):
         self.hp = 170
         self.stamina = 100
         self.mana = 0
-        self.defense = 90
+        self.defense = 35
         self.skill = 1.1
         self.abilities = ["War Cry", "Shield Bash", "Battle Roar"]
 
@@ -280,9 +285,9 @@ class Bard(Character):
         self.hp = 120
         self.stamina = 80
         self.mana = 0
-        self.defense = 40
+        self.defense = 10
         self.skill = 1.2
-        self.respect = 50
+        self.respect = 100
         self.abilities = ["Song of Healing", "Inspiring Melody", "Lullaby"]
 
 class Monster(Character):
@@ -291,7 +296,7 @@ class Monster(Character):
         self.hp = 160
         self.stamina = 100
         self.mana = 0
-        self.defense = 70
+        self.defense = 30
         self.skill = 1.3
         self.abilities = ["Claw Swipe", "Bite", "Roar"]
  
@@ -328,12 +333,11 @@ print(f"Vyber si svou třídu:\n")
 Hero = Hero.classing()
 print(f"\n---> Tvoje postava je {Hero.name}, třída: {Hero.char_class}, HP: {Hero.hp}, Stamina: {Hero.stamina}, Mana: {Hero.mana}, Defense: {Hero.defense}\n")
 time.sleep(2)
-print(f"\nNyní můžeš začít hrát. Tvým úkolem je přežít a porazit nepřítele.\n") 
+print(f"\nNyní můžeš začít hrát. Tvým úkolem je přežít a porazit nepřítele.") 
 time.sleep(3)
-print("Boj začínáš bez vybavení a vylepšení, jestli chceš použít meč nebo vypít lektvar, musíš na to využít kolo.\n")
+print("Boj začínáš bez vybavení a vylepšení, jestli chceš použít meč nebo vypít lektvar, musíš na to využít kolo.")
 time.sleep(3)
 print("Ale neměj strách, protivník se připravuje, takže první tři kola na tebe nezaútočí.")
-time.sleep(3)
 
 
 
@@ -341,6 +345,7 @@ time.sleep(3)
     
 
 while alive:
+    time.sleep(3)
     print("\nZde jsou dostupné akce: \n"
           "1. Ůtočení\n"
           "2. Elixíry\n"
@@ -360,15 +365,18 @@ while alive:
             else:
 
                 if Hero.char_class == "Witcher" :
-                    print(f"Jako zklínač můžeš používat i znamení :\n")
+                    print(f"Tvé schopnosti jsou: ")
+                    for x, (ability) in enumerate(Hero.abilities):
+                        print(f"|{x +1}|{ability}")
+                    print(f"\nJako zklínač můžeš používat i znamení (cena --> 10 many) :\n")
                     time.sleep(1)
-                    for key, value in Hero.signs.items():
-                        print(f"{key} - {value}")
+                    for x, (key, value) in enumerate(Hero.signs.items()):
+                        print(f"|1{x + 1}|{key} - {value}")
                     print("")
                     time.sleep(3)
                     Hero.use_sign(Enemy)
-                    print(f"\n{Hero.name} použil znamení.")
-                    print(f"{Hero.name} má nyní {Hero.mana} many.")
+                    time.sleep(2)
+                    print(f"\n{Hero.name} má nyní {Hero.mana}/100 many.")
                     print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
 
                     
