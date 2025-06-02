@@ -40,15 +40,15 @@ class Character:
             "blizzard": False, # stamina regen
             }
         self.equip = {
-            "crossbow": [False, 0.3],  # [owned, dmg multiplier]
-            "dagger": [False, 0.2],  # [owned, dmg multiplier]
-            "sword": [False, 0.15],
-            "axe": [False, 0.25],
-            "bow": [False, 0.2],
-            "bomb": [False, 60],  # [owned, base dmg]
-            "poison bomb": [False, 50, "poisoned"],  # [owned, base dmg, effect]
-            "fire bomb": [False, 50, "burning"],  # [owned, base dmg, effect]
-            "frost bomb": [False, 50, "frozen"],  # [owned, base dmg, effect]
+            "crossbow": {"own":False,"dmg_mutipl": 0.3},  # [owned, dmg multiplier]
+            "dagger": {"own":False,"dmg_mutipl": 0.2},  # [owned, dmg multiplier]
+            "sword": {"own":False,"dmg_mutipl": 0.15},
+            "axe": {"own":False,"dmg_mutipl": 0.25},
+            "bow": {"own":False,"dmg_mutipl": 0.2},
+            "bomb": {"own":False,"dmg": 60, "effect": None},  # [owned, base dmg]
+            "poison bomb": {"own":False,"dmg": 50, "effect": "poisoned"},  # [owned, base dmg, effect]
+            "fire bomb": {"own":False,"dmg": 50, "effect": "burning"},  # [owned, base dmg, effect]
+            "frost bomb": {"own":False,"dmg": 50, "effect": "frozen"},  # [owned, base dmg, effect]
             }
 
     def is_alive_check(self):
@@ -91,6 +91,63 @@ class Character:
 
     # def potion(self, potion_type):
     #     pass
+
+    def use_item(self):
+        item_choice = input("Vyber si nástroj (číslo): ").strip()
+
+        if item_choice.isdigit():
+            item_choice = int(item_choice)
+
+            if 1 <= item_choice <= len(Hero.equip):
+                item_name = list(Hero.equip.keys())[item_choice - 1]
+
+                if Hero.equip[item_name]:
+                    if item_name == "bomb":
+                        print(f"Máš {item_name} ten dává {Hero.equip[item_name][1]} základního poškození.")
+                        bomb_attack = Attack(Hero, "Bomb", base_dmg=Hero.equip[item_name][1], dmg_type="explosive")
+                        Enemy.take_damage(bomb_attack)
+                        print(f"{Enemy.name} má nyní {Enemy.hp} HP.")
+                        Hero.equip[item_name][0] = False 
+                        time.sleep(2)
+
+                    elif item_name == "poison bomb":
+                        print(f"{Hero.name} použil {item_name} a způsobil {Hero.equip[item_name][1]} poškození s efektem otravy.")
+                        poison_attack = Attack(Hero, "Poison Bomb", base_dmg=Hero.equip[item_name][1], dmg_type="explosive", effects=["poisoned"])
+                        Enemy.take_damage(poison_attack)
+                        print(f"{Enemy.name} má nyní {Enemy.hp} HP.")
+                        Hero.equip[item_name][0] = False 
+                        time.sleep(2)
+
+                    elif item_name == "fire bomb":
+                        print(f"{Hero.name} použil {item_name} a způsobil {Hero.equip[item_name][1]} poškození s efektem hoření.")
+                        fire_attack = Attack(Hero, "Fire Bomb", base_dmg=Hero.equip[item_name][1], dmg_type="explosive", effects=["burning"])
+                        Enemy.take_damage(fire_attack)
+                        print(f"{Enemy.name} má nyní {Enemy.hp} HP.")
+                        Hero.equip[item_name][0] = False 
+                        time.sleep(2)
+                    
+                    elif item_name == "frost bomb":
+                        print(f"{Hero.name} použil {item_name} a způsobil {Hero.equip[item_name][1]} poškození s efektem zmrazení.")
+                        frost_attack = Attack(Hero, "Frost Bomb", base_dmg=Hero.equip[item_name][1], dmg_type="explosive", effects=["frozen"])
+                        Enemy.take_damage(frost_attack)
+                        print(f"{Enemy.name} má nyní {Enemy.hp} HP.")
+                        Hero.equip[item_name][0] = False  # Remove the item after use
+                        time.sleep(2)
+                    
+                    else :
+                        Hero.skill += Hero.equip[item_name][1]  # Apply the multiplier if the item is owned
+                        print(f"Máš {item_name} a ten ti zlepšuje sílu o {Hero.equip[item_name][1] * 100:.0f}%.")
+                        print(f"{Hero.name} má nyní sílu {Hero.skill * 100:.0f}%.")
+                        time.sleep(2)
+
+                else:
+                    print(f"Nemáš {item_name}.")
+            else:
+                print("Neplatná volba.")
+        else:
+            print("Zadej číslo nástroje.")
+
+
 
     def nameing(self):
         name = input("-- Zadej jméno: ").strip()
@@ -183,11 +240,11 @@ class Witcher(Character):
                 sign_choice = int(sign_choice)
 
                 if sign_choice < 11 or sign_choice > len(self.signs) + 10:
-                    print("Neplatné číslo znamení. Zkus to znovu.")
+                    print("\nNeplatné číslo znamení. Zkus to znovu.\n")
                     continue
 
                 if not sign_choice == 14 and self.mana < 10:
-                    print("Nemáš dost many na použití znamení.")
+                    print("\nNemáš dost many na použití znamení.\n")
                     break
 
                 if sign_choice == 11:
@@ -350,7 +407,7 @@ while alive:
           "1. Ůtočení\n"
           "2. Elixíry\n"
           "3. Nástroje\n"
-          "4. Zkontroluj svůj stav\n"
+          "4. Zkontroluj svůj stav a stav nepřítele\n"
           "5. Exit Game\n"
           "6. a\n")
     
@@ -387,23 +444,10 @@ while alive:
                 pass
 
         elif action == 3:
-            for idx, (item, owned) in enumerate(Hero.equip.items(), 1):
-                print(f"{idx}. {item} - {'Máš' if owned else 'Nemáš'}")
-            print("")
-            item_choice = input("Vyber si nástroj (číslo): ").strip()
-            if item_choice.isdigit():
-                item_choice = int(item_choice)
-                if 1 <= item_choice <= len(Hero.equip):
-                    item_name = list(Hero.equip.keys())[item_choice - 1]
-                    if Hero.equip[item_name]:
-                        Hero.skill += Hero.equip[item_name][1]  # Apply the multiplier if the item is owned
-                        print(f"Máš {item_name} a ten ti zlepšuje sílu o {Hero.equip[item_name][1] * 100:.0f}%.")
-                    else:
-                        print(f"Nemáš {item_name}.")
-                else:
-                    print("Neplatná volba.")
-            else:
-                print("Zadej číslo nástroje.")
+            for item in len(Hero.equip.items()):
+                print(f"|{item}| {Hero.equip(item)} - {'Máš' if Hero.equip(item)["own"] == True else 'Nemáš'}")
+            print("\nPozor!!!, od každé bomy máš jen jeden kus, takže je používej opatrně.\n")
+            Hero.use_item()  # Use the method to handle item usage
 
         elif action == 4:
             print(f"\n{Hero.name} - stav postavy:")
@@ -412,7 +456,15 @@ while alive:
             print(f"Mana: {Hero.mana}")
             print(f"Defense: {Hero.defense}")
             print(f"Abilities: {', '.join(Hero.abilities)}")
-            time.sleep(4)
+            time.sleep(3)
+
+            print(f"\n{Enemy.name} - stav nepřítele:")
+            print(f"HP: {Enemy.hp}")
+            print(f"Stamina: {Enemy.stamina}")
+            print(f"Mana: {Enemy.mana}")
+            print(f"Defense: {Enemy.defense}")
+            print(f"Abilities: {', '.join(Enemy.abilities)}")
+            time.sleep(3)
 
         elif action == 5:
             print("Díky za hraní! Nashledanou.\n")
