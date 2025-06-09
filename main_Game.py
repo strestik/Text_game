@@ -31,7 +31,7 @@ titles = [
     "Metla bezvěrců",
     "Věčný král",
     "Nesporný vládce Khemri a celé Nehekhary",
-    "Jediný pravý král"
+    "Jediný pravý král",
     "Král Divokého honu",
     "Řezník světů",
     "Chladný plamen prázdnoty",
@@ -112,6 +112,8 @@ class Character:
         self.skill = 1.2  # dmg multiplier
         self.respect = 15
         self.abilities = []
+        self.h_amount = 0
+        self.s_amount = 0
 
         self.effects = {"burning": {"is" : False, "duration": 0}, 
                         "poisoned": {"is" : False, "duration": 0}, 
@@ -124,11 +126,11 @@ class Character:
             "healing potion": {"own": 3,"amount": 50},
             "stamina potion": {"own": 3,"amount": 45},
             "mana potion": {"own": 3,"amount": 35}, 
-            "vlaštovka": {"own": 1,"amount": 15, "duration" : 3}, # duration healing
+            "vlaštovka": {"own": 1,"amount": 15, "duration" : 4}, # duration healing
             "hrom": {"own": 2,"amount": 1.5}, # dmg multiplier
             "vlk": {"own": 2,"amount": 0.15}, # sklill multiplier
             "medvěd": {"own": 2,"amount": 0.25}, # defense multiplier
-            "blizzard": {"own": 1,"amount": 20, "duration" : 3}, # stamina regen
+            "blizzard": {"own": 1,"amount": 20, "duration" : 4}, # stamina regen
             }
         
         self.equip = {
@@ -172,79 +174,79 @@ class Character:
         self.is_alive_check()
 
 
-    def apply_effects(self, amount = None):    # možnost přidání časiového omezení efektů
+    def apply_effects(self, h_amount, s_amount):    # možnost přidání časiového omezení efektů
         if self.effects["bleeding"]["is"] == True:
             if self.effects["bleeding"]["duration"] == 0:
                 pass
             else:
-                print(f"{self.name} krvácí a ztrácí 10 HP.")
+                print(f"\n{self.name} krvácí a ztrácí 10 HP.\n")
                 self.hp -= 10
                 self.effects["bleeding"]["duration"] -= 1
                 if self.effects["bleeding"]["duration"] <= 0:
                     self.effects["bleeding"]["is"] = False
-                    print(f"{self.name} přestal krvácet.")
+                    print(f"{self.name} přestal krvácet.\n")
 
         if self.effects["burning"]["is"] == True:
             if self.effects["burning"]["duration"] == 0:
                 pass
             else:
-                print(f"{self.name} hoří a ztrácí 15 HP.")
+                print(f"\n{self.name} hoří a ztrácí 15 HP.\n")
                 self.hp -= 15
                 self.effects["burning"]["duration"] -= 1
                 if self.effects["burning"]["duration"] <= 0:
                     self.effects["burning"]["is"] = False
-                    print(f"{self.name} přestal hořet.")
+                    print(f"{self.name} přestal hořet.\n")
 
         if self.effects["poisoned"]["is"] == True:
             if self.effects["poisoned"]["duration"] == 0:
                 pass
             else:
-                print(f"{self.name} je otráven a ztrácí 5 HP.")
+                print(f"\n{self.name} je otráven a ztrácí 5 HP.\n")
                 self.hp -= 5
                 self.effects["poisoned"]["duration"] -= 1
                 if self.effects["poisoned"]["duration"] <= 0:
                     self.effects["poisoned"]["is"] = False
-                    print(f"{self.name} přestal být otráven.")
+                    print(f"{self.name} přestal být otráven.\n")
 
         if self.effects["stunned"]["is"] == True:
             if self.effects["stunned"]["duration"] == 0:
                 self.effects["stunned"]["is"] = False
-                print(f"{self.name} se zotavil z omráčení.")
+                print(f"{self.name} se zotavil z omráčení.\n")
             else:
                 self.effects["stunned"]["duration"] -= 1
-                print(f"{self.name} je omráčen a nemůže se hýbat tento kolo.")
+                print(f"\n{self.name} je omráčen a nemůže se hýbat tento kolo.\n")
                 # časový limit pro omráčení, např. 1
 
         if self.effects["frozen"]["is"] == True:
             if self.effects["frozen"]["duration"] == 0:
                 self.effects["frozen"]["is"] = False
-                print(f"{self.name} se zotavil z omrznutí.")
+                print(f"{self.name} se zotavil z omrznutí.\n")
             else:
                 self.effects["frozen"]["duration"] -= 1
-                print(f"{self.name} je zmrzlý, tento kolo se může hýbat jen omezeně.")
+                print(f"\n{self.name} je zmrzlý, tento kolo se může hýbat jen omezeně.\n")
                 #časový limit pro zmrazení, např. 1 partly stunned
 
         if self.effects["healing"]["is"] == True:
             if self.effects["healing"]["duration"] == 0:
-                pass
+                self.h_amount = 0
             else:
-                print(f"{self.name} se léčí a získává {amount}.")
-                self.hp += {amount}
+                print(f"\n{self.name} se léčí a získává {h_amount}.\n")
+                self.hp += h_amount
                 self.effects["healing"]["duration"] -= 1
                 if self.effects["healing"]["duration"] <= 0:
                     self.effects["healing"]["is"] = False
-                    print(f"{self.name} přestal regenerovat HP.")
+                    print(f"{self.name} přestal regenerovat HP.\n")
                     
         if self.effects["stamina regen"]["is"] == True:
             if self.effects["stamina regen"]["duration"] == 0:
-                pass
+                self.s_amount = 0
             else:
-                print(f"{self.name} regeneruje {amount} Stamina.")
-                self.stamina += {amount}
+                print(f"\n{self.name} regeneruje {s_amount} Stamina.\n")
+                self.stamina += s_amount
                 self.effects["stamina regen"]["duration"] -= 1
                 if self.effects["stamina regen"]["duration"] <= 0:
                     self.effects["stamina regen"]["is"] = False
-                    print(f"{self.name} přestal regenerovat Stamina.")
+                    print(f"{self.name} přestal regenerovat staminu.\n")
         else:
             pass
         # self.is_alive_check()
@@ -252,10 +254,10 @@ class Character:
     def potion_usage(self, potion_type):
         if self.elixiers[potion_type]["own"] > 0:
             self.elixiers[potion_type]["own"] -= 1
-            print(f"{self.name} nyní má {self.elixiers[potion_type]['own']} kusů {potion_type}.")
+            print(f"{self.name} nyní má {self.elixiers[potion_type]['own']} kusů lektvaru {potion_type}.")
         else:
             print(f"{self.name} nemá žádné {potion_type}. Zkus to znovu.")
-            self.use_item()
+            self.potion()
 
     def potion_effect(self, potion_type):
             if potion_type == "healing potion":
@@ -263,13 +265,15 @@ class Character:
                 time.sleep(0.7)
                 self.hp += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} HP.")
+                print(f"\n{self.name} má nyní {self.hp} HP.\n")
                 time.sleep(1)
 
             elif potion_type == "stamina potion":
                 self.potion_usage("stamina potion")
                 time.sleep(0.7)
                 self.stamina += self.elixiers[potion_type]["amount"]
-                print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} Stamina.")
+                print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} staminy.")
+                print(f"\n{self.name} má nyní {self.stamina} staminy.\n")
                 time.sleep(1)
 
             elif potion_type == "mana potion":
@@ -277,25 +281,30 @@ class Character:
                 time.sleep(0.7)
                 self.mana += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} many.")
+                print(f"\n{self.name} má nyní {self.mana} many.\n")
                 time.sleep(1)
 
             elif potion_type == "vlaštovka":
-                self.elixiers[potion_type]["amount"] = 3 # Reset amount for next use
+                self.elixiers[potion_type]["duration"] = 3 # Reset amount for next use
                 self.potion_usage("vlaštovka")
                 time.sleep(0.7)
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} HP.")
                 self.hp += self.elixiers[potion_type]["amount"]
+                print(f"\n{self.name} má nyní {self.hp} HP.\n")
                 self.effects["healing"]["is"] = True
-                self.effects["healing"]["duration"] = self.elixiers[potion_type]["duration"] - 1
-                self.apply_effects(self.elixiers[potion_type]["amount"])
+                self.effects["healing"]["duration"] = self.elixiers["vlaštovka"]["duration"]
+                self.h_amount = self.elixiers[potion_type]["amount"]
+                self.apply_effects(self.h_amount, 0)
                 print(f"{self.name} bude regenerovat {self.elixiers[potion_type]['amount']} HP po dobu {self.elixiers[potion_type]['duration']} kol.")
+                print(f"{self.name} má nyní {self.hp} HP.\n")
                 time.sleep(1)
                 
             elif potion_type == "hrom":
                 self.potion_usage("hrom")
                 time.sleep(0.7)
-                self.skill += self.elixiers[potion_type]["amount"]
+                self.skill *= self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} krát víc síly.")
+                print(f"\n{self.name} má nyní sílu {self.skill}%.\n")
                 time.sleep(1)
 
             elif potion_type == "vlk":
@@ -303,6 +312,7 @@ class Character:
                 time.sleep(0.7)
                 self.skill += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount'] * 100}% síly.")
+                print(f"\n{self.name} má nyní sílu {self.skill}%.\n")
                 time.sleep(1)
 
             elif potion_type == "medvěd":
@@ -310,30 +320,66 @@ class Character:
                 time.sleep(0.7)
                 self.defense += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount'] * 100}% obrany.")
+                print(f"\n{self.name} má nyní {self.defense} štítu.\n")
                 time.sleep(1)
             
             elif potion_type == "blizzard":
-                self.elixiers[potion_type]["amount"] = 3
+                self.elixiers[potion_type]["duration"] = 3
                 self.potion_usage("blizzard")
                 time.sleep(0.7)
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} Stamina.")
                 self.stamina += self.elixiers[potion_type]["amount"]
+                print(f"\n{self.name} má nyní {self.stamina} staminy.\n")
                 self.effects["stamina regen"]["is"] = True
-                self.effects["stamina regen"]["duration"] = self.elixiers[potion_type]["duration"] - 1
-                self.apply_effects(self.elixiers[potion_type]["amount"])
-                print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} Stamina.")
+                self.effects["stamina regen"]["duration"] = self.elixiers[potion_type]["duration"]
+                self.s_amount = self.elixiers[potion_type]["amount"]
+                self.apply_effects(0, self.s_amount)
+                print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} staminy.")
                 print(f"{self.name} bude regenerovat {self.elixiers[potion_type]['amount']} Stamina po dobu {self.elixiers[potion_type]['duration']} kol.")
+                print(f"{self.name} má nyní {self.stamina} staminy.\n")
                 time.sleep(1)
             else:
                 print(f"{self.name} nemá žádný takový lektvar. Zkus to znovu.")
-                self.use_item()
+                self.potion()
                 return
                 
             
-    def potion(self, potion_type):
+    def potion(self):
+        print("\nDostupné lektvary:\n"
+                f"1. Healing Potion (léčí 50 HP) [kusů : {self.elixiers['healing potion']['own']}]\n"
+                f"2. Stamina Potion (regeneruje 45 Stamina) [kusů : {self.elixiers['stamina potion']['own']}]\n"
+                f"3. Mana Potion (regeneruje 35 many) [kusů : {self.elixiers['mana potion']['own']}]\n"
+                f"4. Vlaštovka (regeneruje 15 HP po dobu 3 kol) [kusů : {self.elixiers['vlaštovka']['own']}]\n"
+                f"5. Hrom (zvyšuje sílu o 50%) [kusů : {self.elixiers['hrom']['own']}]\n"
+                f"6. Vlk (zvyšuje sílu o 15%) [kusů : {self.elixiers['vlk']['own']}]\n"
+                f"7. Medvěd (zvyšuje obranu o 25%) [kusů : {self.elixiers['medvěd']['own']}]\n"
+                f"8. Blizzard (regeneruje 20 Stamina po dobu 3 kol) [kusů : {self.elixiers['blizzard']['own']}]\n")
+        
         potion_type = input("Vyber si lektvar (číslo): ").strip().lower()
-        if potion_type == "healing potion":
-            self.potion_usage("healing potion")
+        if potion_type.isdigit():
+            potion_type = int(potion_type)
+            if potion_type == 1:
+                self.potion_effect("healing potion")
+            elif potion_type == 2:
+                self.potion_effect("stamina potion")
+            elif potion_type == 3:
+                self.potion_effect("mana potion")
+            elif potion_type == 4:
+                self.potion_effect("vlaštovka")
+            elif potion_type == 5:
+                self.potion_effect("hrom")
+            elif potion_type == 6:
+                self.potion_effect("vlk")
+            elif potion_type == 7:
+                self.potion_effect("medvěd")
+            elif potion_type == 8:
+                self.potion_effect("blizzard")
+            else:
+                print("Zadali jste špatné číslo, zkuste to znovu.")
+                self.potion()
+        else:
+            print("\nNeplatný vstup. Zkus to znovu.\n")
+            self.potion()
 
 
     def attcking(self, target):
@@ -712,7 +758,7 @@ print("Ale neměj strách, protivník se připravuje, takže první tři kola na
     
 while alive:
     time.sleep(3)
-    Hero.apply_effects()  # Apply effects at the start of each round
+    Hero.apply_effects(Hero.h_amount, Hero.s_amount)  # Apply effects at the start of each round
     time.sleep(1)
     print(f"\nKolo : {round_counter}\n")
     print("\nZde jsou dostupné akce: \n"
@@ -793,8 +839,11 @@ while alive:
                         
 
         elif action == 2:
-            
-                pass
+            print("Pozor lektvarů máš jen omezený počet. Využíj je moudře.")
+            time.sleep(0.5)
+            Hero.potion()
+            time.sleep(1)
+
 
         elif action == 3:
             for index, item in enumerate(Hero.equip, start=1):                                                 # len(list(Hero.equip.items())):
@@ -837,20 +886,23 @@ while alive:
         continue
 
     # Simulace útoku nepřítele
-    Enemy.apply_effects()  # Apply effects at the start of each round
+    Enemy.apply_effects(Enemy.h_amount, Enemy.s_amount)  # Apply effects at the start of each round
     time.sleep(1)
     if delay > 0:
         print(f"\n{Enemy.name} se připravuje na útok...")
+        if round_counter == 3:
+            delay = 0
         time.sleep(delay)
     else:
         print(f"\n{Enemy.name} útočí.")
         time.sleep(0.5)
         if Enemy.hp < Enemy.hp / 2 and Hero.hp > Hero.hp / 2:
-            Enemy.use_potion
+            Enemy.potion()
             enemy_attack = Attack(Enemy, "Monster Attack", base_dmg=20, dmg_type="physical", effects=["bleeding"])  
             Hero.take_damage(enemy_attack)
             print(f"{Enemy.name} útočí na {Hero.name} a způsobuje {enemy_attack.calculate_damage()} poškození.")
             print(f"{Hero.name} má nyní {Hero.hp} HP.\n")
+        
         Hero.is_alive_check()
         time.sleep(2)
         

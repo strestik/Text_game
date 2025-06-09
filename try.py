@@ -176,3 +176,5 @@ while True:
     Hero.use_item()  # Použití nástroje
     print(f"{Hero.name} má nyní {Hero.hp} HP a {Hero.skill * 100:.0f}% sílu.")
     print(f"{Enemy.name} má nyní {Enemy.hp} HP a {Enemy.skill * 100:.0f}% sílu.")
+
+    
