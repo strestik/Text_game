@@ -126,7 +126,7 @@ class Character:
             "healing potion": {"own": 3,"amount": 50},
             "stamina potion": {"own": 3,"amount": 45},
             "mana potion": {"own": 3,"amount": 35}, 
-            "vlaštovka": {"own": 1,"amount": 15, "duration" : 4}, # duration healing
+            "vlaštovka": {"own": 1,"amount": 25, "duration" : 4}, # duration healing
             "hrom": {"own": 2,"amount": 1.5}, # dmg multiplier
             "vlk": {"own": 2,"amount": 0.15}, # sklill multiplier
             "medvěd": {"own": 2,"amount": 0.25}, # defense multiplier
@@ -265,7 +265,7 @@ class Character:
                 time.sleep(0.7)
                 self.hp += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} HP.")
-                print(f"\n{self.name} má nyní {self.hp} HP.\n")
+                print(f"{self.name} má nyní {self.hp} HP.")
                 time.sleep(1)
 
             elif potion_type == "stamina potion":
@@ -273,7 +273,7 @@ class Character:
                 time.sleep(0.7)
                 self.stamina += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} staminy.")
-                print(f"\n{self.name} má nyní {self.stamina} staminy.\n")
+                print(f"{self.name} má nyní {self.stamina} staminy.")
                 time.sleep(1)
 
             elif potion_type == "mana potion":
@@ -281,16 +281,16 @@ class Character:
                 time.sleep(0.7)
                 self.mana += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} many.")
-                print(f"\n{self.name} má nyní {self.mana} many.\n")
+                print(f"{self.name} má nyní {self.mana} many.")
                 time.sleep(1)
 
             elif potion_type == "vlaštovka":
-                self.elixiers[potion_type]["duration"] = 3 # Reset amount for next use
+                self.elixiers[potion_type]["duration"] = 4 # Reset amount for next use
                 self.potion_usage("vlaštovka")
                 time.sleep(0.7)
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} HP.")
                 self.hp += self.elixiers[potion_type]["amount"]
-                print(f"\n{self.name} má nyní {self.hp} HP.\n")
+                print(f"{self.name} má nyní {self.hp} HP.")
                 self.effects["healing"]["is"] = True
                 self.effects["healing"]["duration"] = self.elixiers["vlaštovka"]["duration"]
                 self.h_amount = self.elixiers[potion_type]["amount"]
@@ -304,7 +304,7 @@ class Character:
                 time.sleep(0.7)
                 self.skill *= self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} krát víc síly.")
-                print(f"\n{self.name} má nyní sílu {self.skill}%.\n")
+                print(f"{self.name} má nyní sílu {self.skill}%.")
                 time.sleep(1)
 
             elif potion_type == "vlk":
@@ -312,7 +312,7 @@ class Character:
                 time.sleep(0.7)
                 self.skill += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount'] * 100}% síly.")
-                print(f"\n{self.name} má nyní sílu {self.skill}%.\n")
+                print(f"{self.name} má nyní sílu {self.skill}%.")
                 time.sleep(1)
 
             elif potion_type == "medvěd":
@@ -320,16 +320,16 @@ class Character:
                 time.sleep(0.7)
                 self.defense += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount'] * 100}% obrany.")
-                print(f"\n{self.name} má nyní {self.defense} štítu.\n")
+                print(f"{self.name} má nyní {self.defense} štítu.")
                 time.sleep(1)
             
             elif potion_type == "blizzard":
-                self.elixiers[potion_type]["duration"] = 3
+                self.elixiers[potion_type]["duration"] = 4
                 self.potion_usage("blizzard")
                 time.sleep(0.7)
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount']} Stamina.")
                 self.stamina += self.elixiers[potion_type]["amount"]
-                print(f"\n{self.name} má nyní {self.stamina} staminy.\n")
+                print(f"{self.name} má nyní {self.stamina} staminy.")
                 self.effects["stamina regen"]["is"] = True
                 self.effects["stamina regen"]["duration"] = self.elixiers[potion_type]["duration"]
                 self.s_amount = self.elixiers[potion_type]["amount"]
@@ -346,14 +346,14 @@ class Character:
             
     def potion(self):
         print("\nDostupné lektvary:\n"
-                f"1. Healing Potion (léčí 50 HP) [kusů : {self.elixiers['healing potion']['own']}]\n"
-                f"2. Stamina Potion (regeneruje 45 Stamina) [kusů : {self.elixiers['stamina potion']['own']}]\n"
-                f"3. Mana Potion (regeneruje 35 many) [kusů : {self.elixiers['mana potion']['own']}]\n"
-                f"4. Vlaštovka (regeneruje 15 HP po dobu 3 kol) [kusů : {self.elixiers['vlaštovka']['own']}]\n"
-                f"5. Hrom (zvyšuje sílu o 50%) [kusů : {self.elixiers['hrom']['own']}]\n"
-                f"6. Vlk (zvyšuje sílu o 15%) [kusů : {self.elixiers['vlk']['own']}]\n"
-                f"7. Medvěd (zvyšuje obranu o 25%) [kusů : {self.elixiers['medvěd']['own']}]\n"
-                f"8. Blizzard (regeneruje 20 Stamina po dobu 3 kol) [kusů : {self.elixiers['blizzard']['own']}]\n")
+                f"1. Healing Potion  (léčí 50 HP)                           [kusů : {self.elixiers['healing potion']['own']}]\n"
+                f"2. Stamina Potion  (regeneruje 45 staminy)                [kusů : {self.elixiers['stamina potion']['own']}]\n"
+                f"3. Mana Potion     (regeneruje 35 many)                   [kusů : {self.elixiers['mana potion']['own']}]\n"
+                f"4. Vlaštovka       (regeneruje 15 HP po dobu 3 kol)       [kusů : {self.elixiers['vlaštovka']['own']}]\n"
+                f"5. Hrom            (zvyšuje násobí 1.5 krát sílu)         [kusů : {self.elixiers['hrom']['own']}]\n"
+                f"6. Vlk             (zvyšuje sílu o 15%)                   [kusů : {self.elixiers['vlk']['own']}]\n"
+                f"7. Medvěd          (zvyšuje obranu o 25%)                 [kusů : {self.elixiers['medvěd']['own']}]\n"
+                f"8. Blizzard        (regeneruje 20 Stamina po dobu 3 kol)  [kusů : {self.elixiers['blizzard']['own']}]\n")
         
         potion_type = input("Vyber si lektvar (číslo): ").strip().lower()
         if potion_type.isdigit():
@@ -584,7 +584,7 @@ class Witcher(Character):
         base = random.randint(40, 50) if Enemy.char_class == "Monster" else random.randint(25, 35)
         silver_sword_attack = Attack(self, "Silver Sword", base_dmg= base, dmg_type="slash", effects = ["bleeding"],)  # silver sword is more effective against monsters 45 if enemy.char_class == "Monster" else 30
         Enemy.take_damage(silver_sword_attack)
-        Enemy.effects["bleeding"] = {"duration": + 3}
+        Enemy.effects["bleeding"]["duration"] += 3 
         Enemy.effects["bleeding"]["is"] = True   # Set bleeding duration to 3 rounds 
         
         
@@ -757,14 +757,16 @@ print("Ale neměj strách, protivník se připravuje, takže první tři kola na
 
     
 while alive:
-    time.sleep(3)
+    time.sleep(2)
+    print("\n")
+    print(f"\nKolo : {round_counter}\n")
+    time.sleep(1)
     Hero.apply_effects(Hero.h_amount, Hero.s_amount)  # Apply effects at the start of each round
     time.sleep(1)
-    print(f"\nKolo : {round_counter}\n")
-    print("\nZde jsou dostupné akce: \n"
+    print("Zde jsou dostupné akce: \n"
         "1. Ůtočení\n"
         "2. Elixíry\n"
-        "3. Nástroje\n"
+        "3. Nástroje a výstroj\n"
         "4. Zkontroluj svůj stav a stav nepřítele\n"
         "5. Exit Game\n"
         "6. a\n")
