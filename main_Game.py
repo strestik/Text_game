@@ -158,7 +158,21 @@ class Character:
             if not Enemy.is_alive:
                 print(f"{Enemy.name} byl poražen. Gratuluji!\n")
                 sys.exit(0)
-        
+
+    def mana_check(self):
+        if self.mana < 20:
+            print("Nemáš dost many!")
+            return
+        else:
+            self.mana -= 20
+
+    def stamina_check(self):
+        if self.stamina < 20:
+            print("Nemáš dost staminy!")
+            return
+        else:
+            self.stamina -= 20
+
 
     def take_damage(self, attack: Attack):
         raw_dmg = attack.calculate_damage()
@@ -662,12 +676,19 @@ class Sorcerer(Character):
         self.skill = 1.4
         self.abilities = ["Fireball", "Ice Spike", "Lightning Bolt"]
 
-    def fireball(self, target):
-        if self.mana < 20:
-            print("Nemáš dost many na Fireball!")
+    def thunder(self, target):
+        if round_counter - t_cooldown > 3:
+            self.mana_check()
+            thunder_attack = Attack(self, "Thunder", base_dmg=random.randint(60, 70), dmg_type="magick", effects=None)  # steel sword is more effective against humans 35 if enemy.char_class != "Monster" else 20
+            Enemy.take_damage(thunder_attack)
+            t_cooldown = round_counter
+        else: 
+            print(f"Blesk můžeš použít až za {round_counter - t_cooldown}")
             return
-        self.mana -= 20
-        attack = Attack(self, "Fireball", base_dmg=45, dmg_type="fire", effects=["burning"])
+
+    def fireball(self, target):
+        self.mana_check()
+        attack = Attack(self, "Fireball", base_dmg=random.randint(30, 45), dmg_type="fire", effects=["burning"])
         target.take_damage(attack)
 
 class Archer(Character):
@@ -778,7 +799,33 @@ while alive:
             print(f"\nVyber si svůj útok--> \n")
             if Hero.char_class == "Sorcerer" :
                 print(f"Jako mág můžeš používat jen magii.")
-                pass
+                print(f"Tvé schopnosti jsou: ")
+                for x, (ability) in enumerate(Hero.abilities):
+                    print(f"|{x +1}|{ability}")
+
+                choice = input("Vyber si magický útok (|x| - napiš x): ").strip()
+                if choice.isdigit():
+                    choice = int(choice)
+                    
+                    if 1 <= choice <= 2 :
+                        if choice == 1:
+                            print(f"\n{Hero.name} použil útok Fire ball!!.")
+                            Hero.fireball(Enemy)
+                            
+                        elif choice == 2:
+                            print(f"\n{Hero.name} použil útok Thunder!!.")
+                            Hero.thunder(Enemy)
+
+                        print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
+                    
+                    else:
+                        print("Neplatná volba. Zkus to znovu.")
+                        continue
+
+                else:
+                    print("Neplatná volba. Zkus to znovu.")
+                    continue
+                
 
             elif Hero.char_class == "Witcher" :
                 print(f"Tvé schopnosti jsou: ")
