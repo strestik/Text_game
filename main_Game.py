@@ -2,7 +2,7 @@ import random
 import time
 import sys
 alive = True
-delay = 3
+delay = 2
 round_counter = 1
 Hero = None  # Initialize Hero variable
 Enemy = None  # Initialize Enemy variable
@@ -156,9 +156,11 @@ class Character:
             alive = False
             if not Hero.is_alive:
                 print(f"{Hero.name} byl poražen! Konec hry.\n")
+                alive = False
                 sys.exit(0)
             if not Enemy.is_alive:
                 print(f"{Enemy.name} byl poražen!!! Gratuluji!\n")
+                alive = False
                 sys.exit(0)
 
     def mana_check(self):
@@ -268,7 +270,8 @@ class Character:
                     print(f"{self.name} přestal regenerovat staminu.\n")
         else:
             pass
-        # self.is_alive_check()
+
+        self.is_alive_check()
 
     def potion_usage(self, potion_type):
         if self.elixiers[potion_type]["own"] > 0:
@@ -372,11 +375,13 @@ class Character:
                 f"5. Hrom            (zvyšuje násobí 1.5 krát sílu)         [kusů : {self.elixiers['hrom']['own']}]\n"
                 f"6. Vlk             (zvyšuje sílu o 15%)                   [kusů : {self.elixiers['vlk']['own']}]\n"
                 f"7. Medvěd          (zvyšuje obranu o 25%)                 [kusů : {self.elixiers['medvěd']['own']}]\n"
-                f"8. Blizzard        (regeneruje 20 Stamina po dobu 3 kol)  [kusů : {self.elixiers['blizzard']['own']}]\n")
+                f"8. Blizzard        (regeneruje 20 staminu po dobu 3 kol)  [kusů : {self.elixiers['blizzard']['own']}]\n")
         
         potion_type = input("Vyber si lektvar (číslo): ").strip().lower()
         if potion_type.isdigit():
             potion_type = int(potion_type)
+            if choice == 0:
+                return
             if potion_type == 1:
                 self.potion_effect("healing potion")
             elif potion_type == 2:
@@ -680,7 +685,7 @@ class Sorcerer(Character):
     def __init__(self, name):
         super().__init__(name, "Sorcerer")
         self.hp = 110
-        self.stamina = 40
+        self.stamina = 0
         self.mana = 100
         self.defense = 20
         self.t_cooldown = 3
@@ -732,8 +737,6 @@ class Archer(Character):
     def __init__(self, name):
         super().__init__(name, "Archer")
         self.hp = 130
-        self.stamina = 100
-        self.mana = 0
         self.defense = 25
         self.equip["brokilon bow"] = {"own":True,"dmg_mutipl": 0.25}
         self.abilities = {"Arrow Rain" : "4 až 8 krát poškodí za 10 dmg", 
@@ -844,7 +847,7 @@ class Monster(Character):
         self.equip["iron claws"] = {"own":True,"dmg_mutipl": 0.25}
         self.abilities = {"Claw Swipe" : "2 krát 15 až 25 dmg a krvácení",
                            "Bite" : "20až 30 dmg, krvácení a otrávení",
-                            "Ripping clutches" : "25 až 35 dmg a silné krvácení"}
+                            "Ripping clutches" : "25 až 35 dmg a silné krvácení"}  # smash attack
         
 
     def claw_swipe(self, target):
@@ -871,7 +874,8 @@ class Monster(Character):
         target.effects["bleeding"]["is"] = True
 
 # class Dwarf
- 
+
+# přidat všude možnost vrátit se 
 ###### POZOR také přidat word dokument rozboru tohoto programu při odevzdávání
 
 
@@ -902,7 +906,7 @@ print(f"Vyber si svou třídu:\n")
 Hero = Hero.classing()
 print(f"\n---> Tvoje postava je {Hero.name}, třída: {Hero.char_class}, HP: {Hero.hp}, Stamina: {Hero.stamina}, Mana: {Hero.mana}, Defense: {Hero.defense}, Síla: {Hero.skill * 100}%\n")
 time.sleep(2)
-print(f"\nNyní můžeš začít hrát.") 
+print(f"\nNyní můžeš začít hrát. Kdykoli by jsi chtěl opustit akci zmáčni '0'. ") 
 time.sleep(2)
 print("Boj začínáš bez vybavení a vylepšení, jestli chceš použít meč nebo vypít lektvar, musíš na to využít kolo.")
 time.sleep(2)
@@ -929,8 +933,7 @@ while alive:
             "2. Elixíry\n"
             "3. Nástroje a výstroj\n"
             "4. Zkontroluj svůj stav a stav nepřítele\n"
-            "5. Exit Game\n"
-            "6. a\n")
+            "5. Exit Game\n")
         
         action = input("Vyber si: ").strip().lower()
         if action.isdigit():
@@ -950,6 +953,8 @@ while alive:
                         choice = input("\nVyber si magický útok (|x| - napiš x): ").strip()
                         if choice.isdigit():
                             choice = int(choice)
+                            if choice == 0:
+                                break
                             
                             if 1 <= choice <= 4 :
                                 if choice == 1:
@@ -981,54 +986,58 @@ while alive:
                         else:
                             print("Neplatná volba. Zkus to znovu.")
                             continue
-                    
+                
 
                 elif Hero.char_class == "Witcher" :
                     print(f"Jako zaklínač jsi velmi schopný bojovník s mečem i magií, proto máš {Hero.skill * 100}% síly.\n")
+                    print(f"Tvé schopnosti jsou: ")
+                    for x, (ability) in enumerate(Hero.abilities):
+                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                    
+                    print(f"\nJako zklínač můžeš používat i znamení (cena --> 10 many) :\n")
+                    time.sleep(1)
+
+                    for x, (key, value) in enumerate(Hero.signs.items()):
+                        print(f"|1{x + 1}|{key} - {value}")
+                    print("")
+
+
                     while True:
-                        print(f"Tvé schopnosti jsou: ")
-                        for x, (ability) in enumerate(Hero.abilities):
-                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
-                        
-                        print(f"\nJako zklínač můžeš používat i znamení (cena --> 10 many) :\n")
                         time.sleep(1)
+                        choice = input("Vyber si útok nebo znamení (|x| - napiš x): ").strip()
+                        if choice.isdigit():
+                            choice = int(choice)
+                            # if choice == 0:
+                            #     break
+                            
+                            if 1 <= choice <= 2 :
+                                if choice == 1:
+                                    print(f"\n{Hero.name} použil útok Silver Sword.")
+                                    Hero.silver_sword(Enemy)
+                                    
+                                elif choice == 2:
+                                    print(f"\n{Hero.name} použil útok Steel Sword.")
+                                    Hero.steel_sword(Enemy)
 
-                        for x, (key, value) in enumerate(Hero.signs.items()):
-                            print(f"|1{x + 1}|{key} - {value}")
-                        print("")
-
-                        while True:
-                            time.sleep(1)
-                            choice = input("Vyber si útok nebo znamení (|x| - napiš x): ").strip()
-                            if choice.isdigit():
-                                choice = int(choice)
-                                
-                                if 1 <= choice <= 2 :
-                                    if choice == 1:
-                                        print(f"\n{Hero.name} použil útok Silver Sword.")
-                                        Hero.silver_sword(Enemy)
-                                        
-                                    elif choice == 2:
-                                        print(f"\n{Hero.name} použil útok Steel Sword.")
-                                        Hero.steel_sword(Enemy)
-
-                                    print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
-                                    break
-                                
-                                elif 11 <= choice <= len(Hero.signs) + 10:
-                                    print(f"Mana: {Hero.mana}/100")
-                                    Hero.use_sign(Enemy, choice)
-                                    time.sleep(2)
-                                    print(f"\n{Hero.name} má nyní {Hero.mana}/100 many.")
-                                    print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
-                                    break
-                                else:
-                                    print("\nNeplatná volba. Zkus to znovu.\n")
-                                    continue
+                                print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
+                                break
+                            
+                            elif 11 <= choice <= len(Hero.signs) + 10:
+                                print(f"Mana: {Hero.mana}/100")
+                                Hero.use_sign(Enemy, choice)
+                                time.sleep(2)
+                                print(f"\n{Hero.name} má nyní {Hero.mana}/100 many.")
+                                print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
+                                break
 
                             else:
                                 print("\nNeplatná volba. Zkus to znovu.\n")
                                 continue
+                        else:
+                            print("\nNeplatná volba. Zkus to znovu.\n")
+                            continue
+                           
+                            
 
                 elif Hero.char_class == "Archer":
                     print(f"Jako lukostřelec můžeš používat útoky na dálku.")
@@ -1041,6 +1050,10 @@ while alive:
                         choice = input("\nVyber si útok (|x| - napiš x): ").strip()
                         if choice.isdigit():
                             choice = int(choice)
+                            if choice == 0:
+                                break
+                            if choice == 0:
+                                    break
                             
                             if 1 <= choice <= 3 :
                                 if choice == 1:
@@ -1076,6 +1089,10 @@ while alive:
                         choice = input("\nVyber si útok (|x| - napiš x): ").strip()
                         if choice.isdigit():
                             choice = int(choice)
+                            if choice == 0:
+                                break
+                            if choice == 0:
+                                    break
                             
                             if 1 <= choice <= 3 :
                                 if choice == 1:
@@ -1110,6 +1127,10 @@ while alive:
                         choice = input("\nVyber si útok (|x| - napiš x): ").strip()
                         if choice.isdigit():
                             choice = int(choice)
+                            if choice == 0:
+                                break
+                            if choice == 0:
+                                    break
                             
                             if 1 <= choice <= 3 :
                                 if choice == 1:
@@ -1146,6 +1167,10 @@ while alive:
                         choice = input("\nVyber si útok (|x| - napiš x): ").strip()
                         if choice.isdigit():
                             choice = int(choice)
+                            if choice == 0:
+                                break
+                            if choice == 0:
+                                    break
                             
                             if 1 <= choice <= 3 :
                                 if choice == 1:
@@ -1169,7 +1194,6 @@ while alive:
                             print("Neplatná volba. Zkus to znovu.")
                             continue
 
-
             elif action == 2:
                 print("Pozor lektvarů máš jen omezený počet. Využíj je moudře.")
                 time.sleep(0.5)
@@ -1180,7 +1204,7 @@ while alive:
             elif action == 3:
                 print(f"Vezmi si svůj nástroj aby sis zvíšil svoji sílu.\n")
                 for index, item in enumerate(Hero.equip, start=1):                                                 
-                    print(f"|{index}| {item} - {'Máš' if Hero.equip[item]['own'] == True else 'Nemáš' }")  
+                    print(f"|{index}| {item} - {'Máš možnost použít' if Hero.equip[item]['own'] == True else 'Už jsi použil' }")  
 
                 print("\nPozor!!!, od každé bomy máš jen jeden kus, takže je používej opatrně.\n")
                 Hero.use_item()                                                                                 # Použití nástroje
@@ -1204,7 +1228,7 @@ while alive:
                 print(f"Mana: {Enemy.mana}")
                 print(f"Defense: {Enemy.defense}")
                 print(f"Abilities: {', '.join(Enemy.abilities)}")
-                print(f"Efficiency: {Hero.skill * 100:.0f}%\n")
+                print(f"Efficiency: {Enemy.skill * 100:.0f}%\n")
                 time.sleep(3)
                 continue
 
@@ -1228,7 +1252,7 @@ while alive:
             delay -= 1
             time.sleep(delay)
         else:
-            print(f"\n{Enemy.name} útočí.")
+            print(f"\n{Enemy.name} je na tahu.")
             time.sleep(0.5)
             if Enemy.hp < Enemy.hp / 2 and Hero.hp > Hero.hp / 2:
                 if Enemy.elixiers["healing potion"]["own"] > 0:
@@ -1249,15 +1273,182 @@ while alive:
                     pass
 
             else:
-                enemy_attack = Attack(Enemy, "Monster Attack", base_dmg=20, dmg_type="physical", effects=["bleeding"]) 
-                Hero.take_damage(enemy_attack)
-                Hero.effects["bleeding"]["duration"] += 3
-                Hero.effects["bleeding"]["is"] = True
-                print(f"{Enemy.name} útočí na {Hero.name} a způsobuje {enemy_attack.calculate_damage()} poškození.")
+                if Enemy.char_class == "Witcher":
+                    if Enemy.stamina > 20:
+                        if random.randint(1, 2) == 1:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Magick Slash'! (35 až 45 dmg, šance na omráčení)")
+                            magick_slash_attack = Attack(Enemy, "Magick Slash", base_dmg=random.randint(35, 45), dmg_type="slash", effects=["stunned"])
+                            Hero.take_damage(magick_slash_attack)
+                            if random.randint(1, 3) == 1:
+                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["is"] = True
+                        else:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Sharp Strike'! (30 až 50 dmg a krvácení)")
+                            sharp_strike_attack = Attack(Enemy, "Sharp Strike", base_dmg=random.randint(30, 50), dmg_type="slash", effects=["bleeding"])
+                            Hero.take_damage(sharp_strike_attack)
+                            Hero.effects["bleeding"]["duration"] += 2
+                            Hero.effects["bleeding"]["is"] = True
+                    else:
+                        if Enemy.elixiers["stamina potion"]["own"] > 0:
+                            Enemy.potion_effect("stamina potion")
+                            print(f"{Enemy.name} získává {Enemy.elixiers['stamina potion']['amount']} staminy.")
+                            print(f"{Enemy.name} má nyní {Enemy.stamina} staminy.\n")
+                        else:
+                            print(f"{Enemy.name} nemá žádné lektvary k použití.\n")
+                            Enemy.stamina += 10
+                            pass
+
+                elif Enemy.char_class == "Sorcerer":
+                    if Enemy.mana > 20:
+                        if random.randint(1, 2) == 2:
+                            Enemy.mana_check()
+                            print(f"{Enemy.name} použil kouzlo 'Energy Burn'! (20 až 35 dmg, snížení many nebo staminy)")
+                            energy_burn_attack = Attack(Enemy, "Energy Burn", base_dmg=random.randint(20, 35), dmg_type="magic", effects=None)
+                            Hero.take_damage(energy_burn_attack)
+                            if Hero.mana < 20:
+                                Hero.stamina = max(Hero.mana - 20, 0)
+                                print(f"{Hero.name} ztrácí 20 staminy!")
+                            elif Hero.stamina < 20:
+                                Hero.mana = max(Hero.mana - 20, 0)
+                                print(f"{Hero.name} ztrácí 20 many!")
+                            else:
+                                pass
+                        
+                        else:
+                            Enemy.mana_check()
+                            print(f"{Enemy.name} použil kouzlo 'Arcane Pulse'! (20 až 40 dmg, šance na snížení obrany)")
+                            arcane_pulse_attack = Attack(Enemy, "Arcane Pulse", base_dmg=random.randint(25, 40), dmg_type="magic", effects=None)
+                            Hero.take_damage(arcane_pulse_attack)
+                            if random.randint(1, 2) == 1:
+                                Hero.defense = max(Hero.defense - 10, 0)
+                                print(f"{Hero.name} ztrácí 10 obrany!")
+                    else:
+                        if Enemy.elixiers["mana potion"]["own"] > 0:
+                            Enemy.potion_effect("mana potion")
+                            print(f"{Enemy.name} získává {Enemy.elixiers['mana potion']['amount']} many.")
+                            print(f"{Enemy.name} má nyní {Enemy.mana} many.\n")
+                        else:
+                            print(f"{Enemy.name} nemá žádné lektvary k použití.\n")
+                            Enemy.mana += 10
+                            pass
+
+                elif Enemy.char_class == "Archer":
+                    if Enemy.stamina > 20:
+                        if random.randint(1, 2) == 1:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Volley Shot'! (10 až 20 dmg 3 krát)")
+                            volley_shot_attack = Attack(Enemy, "Volley Shot", base_dmg=random.randint(10, 20) * 3, dmg_type="piercing", effects=None)
+                            Hero.take_damage(volley_shot_attack)
+                        else:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Pinning Arrow'! (15 až 25 dmg a šance na omráčení)")
+                            pinning_arrow = Attack(Enemy, "Pinning Arrow", base_dmg=random.randint(15, 25), dmg_type="piercing", effects=["stunned"])
+                            Hero.take_damage(pinning_arrow)
+                            if random.randint(1, 2) == 1:
+                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["is"] = True
+                    else:
+                        if Enemy.elixiers["stamina potion"]["own"] > 0:
+                            Enemy.potion_effect("stamina potion")
+                            print(f"{Enemy.name} získává {Enemy.elixiers['stamina potion']['amount']} staminy.")
+                            print(f"{Enemy.name} má nyní {Enemy.stamina} staminy.\n")
+                        else:
+                            print(f"{Enemy.name} nemá žádné lektvary k použití.\n")
+                            Enemy.stamina += 10
+                            pass
+
+
+                elif Enemy.char_class == "Jarl":
+                    if Enemy.stamina > 20:
+                        if random.randint(1, 2) == 1:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Berserker Rage'! (40 až 45 dmg a snížení vlastní obrany)")
+                            berserker_rage_attack = Attack(Enemy, "Berserker Rage", base_dmg=random.randint(40, 55), dmg_type="slash", effects=None)
+                            Hero.take_damage(berserker_rage_attack)
+                            Enemy.defense = max(Enemy.defense - 10, 0)
+                            print(f"{Enemy.name} ztrácí 10 obrany kvůli zuřivosti!")
+                        else:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Shield Bash'! (20 až 30 dmg a šance na omráčení)")
+                            shield_bash_attack = Attack(Enemy, "Shield Bash", base_dmg=random.randint(20, 30), dmg_type="blunt", effects=["stunned"])
+                            Hero.take_damage(shield_bash_attack)
+                            if random.randint(1, 3) == 1:
+                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["is"] = True
+                    else:
+                        if Enemy.elixiers["stamina potion"]["own"] > 0:
+                            Enemy.potion_effect("stamina potion")
+                            print(f"{Enemy.name} získává {Enemy.elixiers['stamina potion']['amount']} staminy.")
+                            print(f"{Enemy.name} má nyní {Enemy.stamina} staminy.\n")
+                        else:
+                            print(f"{Enemy.name} nemá žádné lektvary k použití.\n")
+                            Enemy.stamina += 10
+                            pass
+
+
+
+                elif Enemy.char_class == "Bard":
+                    if Enemy.stamina > 20:
+                        if random.randint(1, 2) == 1:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} zahrál 'Song of Weakness'! (20 až 25 dmg a sníží sílu)")
+                            song_weakness_attack = Attack(Enemy, "Song of Weakness", base_dmg=random.randint(20, 25), dmg_type="psychic", effects=None)
+                            Hero.take_damage(song_weakness_attack)
+                            Hero.skill = max(Hero.skill - 0.1, 0)
+                            print(f"{Hero.name} má nyní sílu {Hero.skill * 100:.0f}%.")
+                        else:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} zahrál 'Confusing ballad'! (25 až 30 dmg a šance na omráčení)")
+                            confusing_ballad_attack = Attack(Enemy, "Confusing ballad", base_dmg=random.randint(25, 30), dmg_type="psychic", effects=["stunned"])
+                            Hero.take_damage(confusing_ballad_attack)
+                            if random.randint(1, 2) == 1:
+                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["is"] = True
+                    else:
+                        if Enemy.elixiers["stamina potion"]["own"] > 0:
+                            Enemy.potion_effect("stamina potion")
+                            print(f"{Enemy.name} získává {Enemy.elixiers['stamina potion']['amount']} staminy.")
+                            print(f"{Enemy.name} má nyní {Enemy.stamina} staminy.\n")
+                        else:
+                            print(f"{Enemy.name} nemá žádné lektvary k použití.\n")
+                            Enemy.stamina += 10
+                            pass
+                        
+
+                elif Enemy.char_class == "Monster":
+                    if Enemy.stamina > 20:
+                        if random.randint(1, 2) == 1:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Venomous Slam'! (20 až 40 dmg a otrava)")
+                            venomous_slam_attack = Attack(Enemy, "Venomous Slam", base_dmg=random.randint(25, 40), dmg_type="blunt", effects=["poisoned"])
+                            Hero.take_damage(venomous_slam_attack)
+                            Hero.effects["poisoned"]["duration"] += 2
+                            Hero.effects["poisoned"]["is"] = True
+                        else:
+                            Enemy.stamina_check()
+                            print(f"{Enemy.name} použil útok 'Terrifying Roar'! (10 až 20 dmg, sníží obranu a má šanci na omráčení)")
+                            terrifying_roar_attack = Attack(Enemy, "Terrifying Roar", base_dmg=random.randint(10, 20), dmg_type="psychic", effects=None)
+                            Hero.take_damage(terrifying_roar_attack)
+                            Hero.defense = max(Hero.defense - 10, 0)
+                            if random.randint(1, 3) == 1:
+                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["is"] = True
+                    else:
+                        if Enemy.elixiers["stamina potion"]["own"] > 0:
+                            Enemy.potion_effect("stamina potion")
+                            print(f"{Enemy.name} získává {Enemy.elixiers['stamina potion']['amount']} staminy.")
+                            print(f"{Enemy.name} má nyní {Enemy.stamina} staminy.\n")
+                        else:
+                            print(f"{Enemy.name} nemá žádné lektvary k použití.\n")
+                            Enemy.stamina += 10
+                            pass
                 print(f"{Hero.name} má nyní {Hero.hp} HP.\n")
             
-            Hero.is_alive_check()
-            time.sleep(2)
             
+        Hero.is_alive_check()
+        Enemy.is_alive_check() 
+        time.sleep(2)   
         round_counter += 1
         break
