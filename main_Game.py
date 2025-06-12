@@ -875,8 +875,6 @@ class Monster(Character):
 
 # class Dwarf
 
-# přidat všude možnost vrátit se 
-###### POZOR také přidat word dokument rozboru tohoto programu při odevzdávání
 
 
 
