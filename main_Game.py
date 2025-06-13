@@ -335,7 +335,7 @@ class Character:
                 time.sleep(0.7)
                 self.skill += self.elixiers[potion_type]["amount"]
                 print(f"{self.name} vypil lektvar a získal {self.elixiers[potion_type]['amount'] * 100}% síly.")
-                print(f"{self.name} má nyní sílu {self.skill}%.")
+                print(f"{self.name} má nyní sílu {self.skill * 100}%.")
                 time.sleep(1)
 
             elif potion_type == "medvěd":
