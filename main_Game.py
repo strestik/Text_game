@@ -122,7 +122,9 @@ class Character:
                         "frozen": {"is" : False, "duration": 0}, 
                         "bleeding": {"is" : False, "duration": 0}, 
                         "healing": {"is" : False, "duration": 0}, 
-                        "stamina regen": {"is" : False, "duration": 0}}
+                        "stamina regen": {"is" : False, "duration": 0},
+                        "shielding" : {"is": False, "duration" : 0},
+                        }
         self.elixiers = {
             "healing potion": {"own": 3,"amount": 50},
             "stamina potion": {"own": 3,"amount": 45},
@@ -269,6 +271,13 @@ class Character:
                 if self.effects["stamina regen"]["duration"] <= 0:
                     self.effects["stamina regen"]["is"] = False
                     print(f"{self.name} přestal regenerovat staminu.\n")
+        #if self.effects["shielding"]["is"] == True:
+            # if self.effects["shielding"]["duration"] == 0:
+            #     self.effects["shielding"]["is"] = False
+            #     print(f"{self.name} se přetal bránit.\n")
+            # else:
+            #     self.effects["shielding"]["duration"] -= 1
+            #     print(f"\n{self.name} se brání .\n")
         else:
             pass
 
@@ -862,9 +871,9 @@ class Jarl(Character):
         self.hp = 140
         self.defense = 30
         self.equip["skellige axe"] = {"own":True,"dmg_mutipl": 0.25}
-        self.abilities = {"War cry" : "20 až 30 HP a 10 až 15 def",
+        self.abilities = {"War cry" : "20 až 30 HP a 5 až 10 def",
                         "Bloody slash" : "30 až 40 dmg a silné krvácení",
-                        "Battle Roar" : "- 20 až 30 nepřátelské def a šance na omráčení nepřítele"}
+                        "Battle Roar" : "- 5 až 15 nepřátelské def a šance na omráčení nepřítele"}
         
     def jarl_attacking(self):
         while True:
@@ -899,7 +908,7 @@ class Jarl(Character):
     def war_cry(self, target):
         self.stamina_check()
         self.hp += random.randint(20, 30)
-        self.defense += random.randint(10, 15)
+        self.defense += random.randint(5, 10)
         print(f"{self.name} použil bojový pokřik a získal {self.hp} HP a {self.defense} obrany.")
 
     def bloody_slash(self, target):
@@ -911,7 +920,11 @@ class Jarl(Character):
 
     def battle_roar(self, target):
         self.stamina_check()
-        target.defense -= random.randint(30, 40)
+        if target.defense - random.randint(5, 15) > 0 :
+            target.defense -= random.randint(5, 15)
+        else:
+            pass
+         
         print(f"{target.name} má nyní {target.defense} obrany.")
         if random.randint(1, 5) == 3:
             print(f"{target.name} je omráčen.")
@@ -1091,7 +1104,7 @@ time.sleep(2)
 print("Ale neměj strách, protivník se připravuje, takže první dvě kola na tebe nezaútočí.")
 
 
-
+# opravit stun
 # Game loop
     
 while alive:
