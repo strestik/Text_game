@@ -235,7 +235,7 @@ class Character:
                 print(f"{self.name} se zotavil z omráčení.\n")
             else:
                 self.effects["stunned"]["duration"] -= 1
-                print(f"\n{self.name} je omráčen a nemůže se hýbat tento kolo.\n")
+                print(f"\n{self.name} je omráčen a nemůže se hýbat toto kolo.\n")
                 # časový limit pro omráčení, např. 1
 
         if self.effects["frozen"]["is"] == True:
@@ -873,7 +873,7 @@ class Jarl(Character):
         self.equip["skellige axe"] = {"own":True,"dmg_mutipl": 0.25}
         self.abilities = {"War cry" : "20 až 30 HP a 5 až 10 def",
                         "Bloody slash" : "30 až 40 dmg a silné krvácení",
-                        "Battle Roar" : "- 5 až 15 nepřátelské def a šance na omráčení nepřítele"}
+                        "Battle Roar" : "- 5 až 15 nepřátelské def a šance na omráčení nepřítele pro toto a další kolo"}
         
     def jarl_attacking(self):
         while True:
@@ -1117,126 +1117,129 @@ while alive:
     time.sleep(1)
 
     while True:
-        print("\nZde jsou dostupné akce: \n"
-            "1. Ůtočení\n"
-            "2. Elixíry\n"
-            "3. Nástroje a výstroj\n"
-            "4. Zkontroluj svůj stav a stav nepřítele\n"
-            "5. Exit Game\n")
-        
-        action = input("Vyber si: ").strip().lower()
-        if action.isdigit():
-            action = int(action)
+        if Hero.effects["stunned"]["is"] == True:
+            print(f"\n{Hero.name} je omráčený.")
+        else:
+            print("\nZde jsou dostupné akce: \n"
+                "1. Ůtočení\n"
+                "2. Elixíry\n"
+                "3. Nástroje a výstroj\n"
+                "4. Zkontroluj svůj stav a stav nepřítele\n"
+                "5. Exit Game\n")
+            
+            action = input("Vyber si: ").strip().lower()
+            if action.isdigit():
+                action = int(action)
 
-            if action == 1 :
-                print(f"\nVyber si svůj útok--> \n")
+                if action == 1 :
+                    print(f"\nVyber si svůj útok--> \n")
 
-                if Hero.char_class == "Sorcerer" :
-                    print(f"Jako mág můžeš používat jen magii.")
-                    print(f"Tvé schopnosti jsou: \n")
-                    for x, (ability) in enumerate(Hero.abilities):
-                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                    if Hero.char_class == "Sorcerer" :
+                        print(f"Jako mág můžeš používat jen magii.")
+                        print(f"Tvé schopnosti jsou: \n")
+                        for x, (ability) in enumerate(Hero.abilities):
+                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                        
+                        Hero.sorcerer_attacking()
                     
-                    Hero.sorcerer_attacking()
-                
 
-                elif Hero.char_class == "Witcher" :
-                    print(f"Jako zaklínač jsi velmi schopný bojovník s mečem i magií, proto máš {Hero.skill * 100}% síly.\n")
-                    print(f"Tvé schopnosti jsou: ")
-                    for x, (ability) in enumerate(Hero.abilities):
-                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
-                    
-                    print(f"\nJako zklínač můžeš používat i znamení (cena --> 10 many) :\n")
+                    elif Hero.char_class == "Witcher" :
+                        print(f"Jako zaklínač jsi velmi schopný bojovník s mečem i magií, proto máš {Hero.skill * 100}% síly.\n")
+                        print(f"Tvé schopnosti jsou: ")
+                        for x, (ability) in enumerate(Hero.abilities):
+                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                        
+                        print(f"\nJako zklínač můžeš používat i znamení (cena --> 10 many) :\n")
+                        time.sleep(1)
+
+                        for x, (key, value) in enumerate(Hero.signs.items()):
+                            print(f"|1{x + 1}|{key} - {value}")
+                        print("")
+                        Hero.witcher_attacking()
+                            
+
+                    elif Hero.char_class == "Archer":
+                        print(f"Jako lukostřelec můžeš používat útoky na dálku.")
+                        print(f"Tvé schopnosti jsou: \n")
+                        for x, (ability) in enumerate(Hero.abilities):
+                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                        
+                        Hero.archer_attacking()
+
+                    elif Hero.char_class == "Jarl":
+                        print(f"Jako Jarl můžeš používat jen bojové schopnosti.")
+                        print(f"Tvé schopnosti jsou: \n")
+                        for x, (ability) in enumerate(Hero.abilities):
+                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                        
+                        Hero.jarl_attacking()
+
+                    elif Hero.char_class == "Bard":
+                        print(f"Jako Bard můžeš používat hudbu a přesvědčování.")
+                        print(f"Tvé schopnosti jsou: \n")
+                        for x, (ability) in enumerate(Hero.abilities):
+                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+            
+                        Hero.bard_attacking()
+
+                    elif Hero.char_class == "Monster":
+                        print(f"Jako Monstrum můžeš používat je drápy a tesáky.")
+                        print(f"Tvé schopnosti jsou: \n")
+                        for x, (ability) in enumerate(Hero.abilities):
+                            print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
+                        
+                        Hero.monster_attacking()
+
+                elif action == 2:
+                    print("Pozor lektvarů máš jen omezený počet. Využíj je moudře.")
+                    time.sleep(0.5)
+                    Hero.potion()
                     time.sleep(1)
 
-                    for x, (key, value) in enumerate(Hero.signs.items()):
-                        print(f"|1{x + 1}|{key} - {value}")
-                    print("")
-                    Hero.witcher_attacking()
-                           
 
-                elif Hero.char_class == "Archer":
-                    print(f"Jako lukostřelec můžeš používat útoky na dálku.")
-                    print(f"Tvé schopnosti jsou: \n")
-                    for x, (ability) in enumerate(Hero.abilities):
-                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
-                    
-                    Hero.archer_attacking()
+                elif action == 3:
+                    print(f"Vezmi si svůj nástroj aby sis zvíšil svoji sílu.\n")
+                    for index, item in enumerate(Hero.equip, start=1):                                                 
+                        print(f"|{index}| {item} - {'Máš možnost použít' if Hero.equip[item]['own'] == True else 'Už jsi použil' }")  
 
-                elif Hero.char_class == "Jarl":
-                    print(f"Jako Jarl můžeš používat jen bojové schopnosti.")
-                    print(f"Tvé schopnosti jsou: \n")
-                    for x, (ability) in enumerate(Hero.abilities):
-                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
-                    
-                    Hero.jarl_attacking()
-
-                elif Hero.char_class == "Bard":
-                    print(f"Jako Bard můžeš používat hudbu a přesvědčování.")
-                    print(f"Tvé schopnosti jsou: \n")
-                    for x, (ability) in enumerate(Hero.abilities):
-                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
-        
-                    Hero.bard_attacking()
-
-                elif Hero.char_class == "Monster":
-                    print(f"Jako Monstrum můžeš používat je drápy a tesáky.")
-                    print(f"Tvé schopnosti jsou: \n")
-                    for x, (ability) in enumerate(Hero.abilities):
-                        print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
-                    
-                    Hero.monster_attacking()
-
-            elif action == 2:
-                print("Pozor lektvarů máš jen omezený počet. Využíj je moudře.")
-                time.sleep(0.5)
-                Hero.potion()
-                time.sleep(1)
+                    print("\nPozor!!!, od každé bomy máš jen jeden kus, takže je používej opatrně.\n")
+                    Hero.use_item()                                                                                 # Použití nástroje
+                    print(f"{Hero.name} má nyní {Hero.hp} HP a {Hero.skill * 100:.0f}% sílu.")
+                    print(f"{Enemy.name} má nyní {Enemy.hp} HP a {Enemy.skill * 100:.0f}% sílu.")
 
 
-            elif action == 3:
-                print(f"Vezmi si svůj nástroj aby sis zvíšil svoji sílu.\n")
-                for index, item in enumerate(Hero.equip, start=1):                                                 
-                    print(f"|{index}| {item} - {'Máš možnost použít' if Hero.equip[item]['own'] == True else 'Už jsi použil' }")  
+                elif action == 4:
+                    print(f"\n{Hero.name} - stav postavy:")
+                    print(f"HP: {Hero.hp}")
+                    print(f"Stamina: {Hero.stamina}")
+                    print(f"Mana: {Hero.mana}")
+                    print(f"Defense: {Hero.defense}")
+                    print(f"Abilities: {', '.join(Hero.abilities)}")
+                    print(f"Efficiency: {Hero.skill * 100:.0f}%")
+                    time.sleep(3)
 
-                print("\nPozor!!!, od každé bomy máš jen jeden kus, takže je používej opatrně.\n")
-                Hero.use_item()                                                                                 # Použití nástroje
-                print(f"{Hero.name} má nyní {Hero.hp} HP a {Hero.skill * 100:.0f}% sílu.")
-                print(f"{Enemy.name} má nyní {Enemy.hp} HP a {Enemy.skill * 100:.0f}% sílu.")
-
-
-            elif action == 4:
-                print(f"\n{Hero.name} - stav postavy:")
-                print(f"HP: {Hero.hp}")
-                print(f"Stamina: {Hero.stamina}")
-                print(f"Mana: {Hero.mana}")
-                print(f"Defense: {Hero.defense}")
-                print(f"Abilities: {', '.join(Hero.abilities)}")
-                print(f"Efficiency: {Hero.skill * 100:.0f}%")
-                time.sleep(3)
-
-                print(f"\n{Enemy.name} - stav nepřítele:")
-                print(f"HP: {Enemy.hp}")
-                print(f"Stamina: {Enemy.stamina}")
-                print(f"Mana: {Enemy.mana}")
-                print(f"Defense: {Enemy.defense}")
-                print(f"Abilities: {', '.join(Enemy.abilities)}")
-                print(f"Efficiency: {Enemy.skill * 100:.0f}%\n")
-                time.sleep(3)
-                continue
+                    print(f"\n{Enemy.name} - stav nepřítele:")
+                    print(f"HP: {Enemy.hp}")
+                    print(f"Stamina: {Enemy.stamina}")
+                    print(f"Mana: {Enemy.mana}")
+                    print(f"Defense: {Enemy.defense}")
+                    print(f"Abilities: {', '.join(Enemy.abilities)}")
+                    print(f"Efficiency: {Enemy.skill * 100:.0f}%\n")
+                    time.sleep(3)
+                    continue
 
 
-            elif action == 5:
-                print("Díky za hraní! Nashledanou.\n")
-                alive = False
-                break
+                elif action == 5:
+                    print("Díky za hraní! Nashledanou.\n")
+                    alive = False
+                    break
 
+                else:
+                    print("Něco jsi zadal špatně. Opakuj.")
+                    continue
             else:
-                print("Něco jsi zadal špatně. Opakuj.")
+                print("\nNapiš číslo úkonu.")
                 continue
-        else:
-            print("\nNapiš číslo úkonu.")
-            continue
 
 
         # Simulace útoku nepřítele
@@ -1245,6 +1248,8 @@ while alive:
             print(f"\n{Enemy.name} je neaktivní...")
             delay -= 1
             time.sleep(delay)
+        elif Enemy.effects["stunned"]["is"] == True:
+            print(f"\n{Enemy.name} je omráčený.")
         else:
             print(f"\n{Enemy.name} je na tahu.")
             time.sleep(0.5)
@@ -1275,7 +1280,7 @@ while alive:
                             magick_slash_attack = Attack(Enemy, "Magick Slash", base_dmg=random.randint(35, 45), dmg_type="slash", effects=["stunned"])
                             Hero.take_damage(magick_slash_attack)
                             if random.randint(1, 3) == 1:
-                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["duration"] += 2
                                 Hero.effects["stunned"]["is"] = True
                         else:
                             Enemy.stamina_check()
@@ -1341,7 +1346,7 @@ while alive:
                             pinning_arrow = Attack(Enemy, "Pinning Arrow", base_dmg=random.randint(15, 25), dmg_type="piercing", effects=["stunned"])
                             Hero.take_damage(pinning_arrow)
                             if random.randint(1, 2) == 1:
-                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["duration"] += 2
                                 Hero.effects["stunned"]["is"] = True
                     else:
                         if Enemy.elixiers["stamina potion"]["own"] > 0:
@@ -1369,7 +1374,7 @@ while alive:
                             shield_bash_attack = Attack(Enemy, "Shield Bash", base_dmg=random.randint(20, 30), dmg_type="blunt", effects=["stunned"])
                             Hero.take_damage(shield_bash_attack)
                             if random.randint(1, 3) == 1:
-                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["duration"] += 2
                                 Hero.effects["stunned"]["is"] = True
                     else:
                         if Enemy.elixiers["stamina potion"]["own"] > 0:
@@ -1398,7 +1403,7 @@ while alive:
                             confusing_ballad_attack = Attack(Enemy, "Confusing ballad", base_dmg=random.randint(25, 30), dmg_type="psychic", effects=["stunned"])
                             Hero.take_damage(confusing_ballad_attack)
                             if random.randint(1, 2) == 1:
-                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["duration"] += 2
                                 Hero.effects["stunned"]["is"] = True
                     else:
                         if Enemy.elixiers["stamina potion"]["own"] > 0:
@@ -1427,7 +1432,7 @@ while alive:
                             Hero.take_damage(terrifying_roar_attack)
                             Hero.defense = max(Hero.defense - 10, 0)
                             if random.randint(1, 3) == 1:
-                                Hero.effects["stunned"]["duration"] += 1
+                                Hero.effects["stunned"]["duration"] += 2
                                 Hero.effects["stunned"]["is"] = True
                     else:
                         if Enemy.elixiers["stamina potion"]["own"] > 0:
