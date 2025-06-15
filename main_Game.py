@@ -1104,7 +1104,6 @@ time.sleep(2)
 print("Ale neměj strách, protivník se připravuje, takže první dvě kola na tebe nezaútočí.")
 
 
-# opravit stun
 # Game loop
     
 while alive:
