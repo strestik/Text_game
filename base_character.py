@@ -1,0 +1,1 @@
+# přidat character, is_alive, mana a stamina checky, a take damage
