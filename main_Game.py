@@ -2,7 +2,7 @@ import random
 import time
 import sys
 from text import *
-from chractering import *
+from chractering import en_classing
 from potion import *
 from items import *
 from effect import *
@@ -996,12 +996,12 @@ def use_item(self):
 
 
 
-
+# f"{Enemy.char_class}"
 Enemy = Character(f"{random.choice(enemy_names)}", f"{random.choice(characters)}")  # Initialize Enemy character
-Enemy = en_classing(f"{random.choice(characters)}")  
+en_classing(Enemy, f"{random.choice(characters)}")  
 
 print(f"\nVýtej hráči, tvým úkolem je přežít a porazit nepřítele.")
-print(f"\nTvím nepřítelem je {Enemy.name} {random.choice(titles)}, třída: {Enemy.char_class}, HP: {Enemy.hp}, Stamina: {Enemy.stamina}, Mana: {Enemy.mana}, Defense: {Enemy.defense}, Síla: {Enemy.skill * 100}%\n")
+print(f"\nTvím nepřítelem je {Enemy.name} {random.choice(titles)}, třída: , HP: {Enemy.hp}, Stamina: {Enemy.stamina}, Mana: {Enemy.mana}, Defense: {Enemy.defense}, Síla: {Enemy.skill * 100}%\n")
 time.sleep(2)
 
 # Nameing
