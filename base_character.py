@@ -3,18 +3,11 @@ import random
 import time
 import sys
 from text import *
-from chractering import *
-from potion import *
-from items import *
-from effect import *
-from h_characters import *
-from e_chracters import *
+import chractering 
 from attack import *
 
-
-Hero = None  # Initialize Hero variable
-Enemy = None  # Initialize Enemy variable
 round_counter = 1
+
 
     
 class Character:
@@ -42,7 +35,7 @@ class Character:
                         "stamina regen": {"is" : False, "duration": 0},
                         "shielding" : {"is": False, "duration" : 0},
                         }
-        
+     
         self.elixiers = {
             "healing potion": {"own": 3,"amount": 50},
             "stamina potion": {"own": 3,"amount": 45},
@@ -113,3 +106,5 @@ def take_damage(self, attack: Attack):
     
         self.is_alive_check()
 
+Hero = Character("x", "x")  # Initialize Hero variable
+Enemy = None

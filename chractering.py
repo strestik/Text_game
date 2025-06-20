@@ -11,6 +11,9 @@ from e_chracters import *
 from base_character import *
 from attack import *
 
+Hero = Character("x", "x")  # Initialize Hero variable
+Enemy = None  # Initialize Enemy variable
+
 def nameing(self):
     name = input("-- Zadej jméno: ").strip()
     if not name:
