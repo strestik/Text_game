@@ -1,15 +1,8 @@
-# jednotlivý characters z Hero
-import random
-import time
-import sys
-from text import *
-from chractering import *
-from potion import *
-from items import *
-from effect import *
-from e_chracters import *
-# from base_character import *
+import random, time, sys
 from attack import *
+from contants import *
+from base_character import Character
+
 
 class Witcher(Character):
     def __init__(self, name):
@@ -28,26 +21,26 @@ class Witcher(Character):
             "Axii": "Proud síly; doplní 20 many",                       # mana + 20 
             "Yrden": "Magické posílení; zlepší útoky o 10%",            # skill +
             "Heliotrop": "Kouzelný štít; zlepší def o 10"}              # def +
-        
+
     def witcher_attacking(self):
         while True:
             time.sleep(1)
             choice = input("Vyber si útok nebo znamení (|x| - napiš x): ").strip()
             if choice.isdigit():
                 choice = int(choice)
-                
+
                 if 1 <= choice <= 2 :
                     if choice == 1:
                         print(f"\n{Hero.name} použil útok Silver Sword.")
                         Hero.silver_sword(Enemy)
-                        
+
                     elif choice == 2:
                         print(f"\n{Hero.name} použil útok Steel Sword.")
                         Hero.steel_sword(Enemy)
 
                     print(f"{Enemy.name} má nyní {Enemy.hp} HP.\n")
                     break
-                
+
                 elif 11 <= choice <= len(Hero.signs) + 10:
                     print(f"Mana: {Hero.mana}/100")
                     Hero.use_sign(Enemy, choice)
@@ -62,23 +55,23 @@ class Witcher(Character):
             else:
                 print("\nNeplatná volba. Zkus to znovu.\n")
                 continue
-                
-        
+
+
     def steel_sword(self, target):
         steel_sword_attack = Attack(self, "Steel Sword", base_dmg=random.randint(30, 40), dmg_type="slash", effects=["bleeding"])  # steel sword is more effective against humans 35 if enemy.char_class != "Monster" else 20
         target.take_damage(steel_sword_attack)
         target.effects["bleeding"]["duration"] += 3 
         target.effects["bleeding"]["is"] = True
 
-        
+
     def silver_sword(self, target):
         base = random.randint(40, 50) if Enemy.char_class == "Monster" else random.randint(25, 35)
         silver_sword_attack = Attack(self, "Silver Sword", base_dmg= base, dmg_type="slash", effects = ["bleeding"],)  # silver sword is more effective against monsters 45 if enemy.char_class == "Monster" else 30
         target.take_damage(silver_sword_attack)
         target.effects["bleeding"]["duration"] += 3 
         target.effects["bleeding"]["is"] = True   # Set bleeding duration to 3 rounds 
-        
-        
+
+
 
     def use_sign(self, target, choice):
         while True:
@@ -102,7 +95,7 @@ class Witcher(Character):
                 target.effects["burning"]["duration"] += 3
                 target.effects["burning"]["is"] = True
                 break
-            
+
             elif sign_choice == 12:
                 print(f"\n{self.name} použil znamení Aard a omráčil nepřítele.")
                 time.sleep(1)
@@ -113,7 +106,7 @@ class Witcher(Character):
                 global delay
                 delay += 1
                 break
-            
+
             elif sign_choice == 13:
                 time.sleep(1)
                 self.defense += 30
@@ -121,24 +114,24 @@ class Witcher(Character):
                 self.mana -= 10
                 print(f"\n{self.name} použil znamení Quen a zvýšil svou obranu na {self.defense}. A nyní má {self.hp} HP.")
                 break
-            
+
             elif sign_choice == 14:
                 print(f"\n{self.name} použil znamení Axii a získal 20 many.")
                 self.mana = min(self.mana + 20, 100)  # Ensure mana does not exceed max
                 break
-            
+
             elif sign_choice == 15:
                 self.skill += 0.1
                 self.mana -= 10  
                 print(f"\n{self.name} použil znamení Yrden a zvýšil svou dovednost na {self.skill * 100:.0f}%.")
                 break
-                
+
             elif sign_choice == 16:
                 self.defense += 10
                 self.mana -= 10 
                 print(f"\n{self.name} použil znamení Heliotrop a zvýšil svou obranu na {self.defense}.")
                 break
-                    
+
             else:
                 print("Neplatné znamení. Dostupné možnosti:")
                 for sign in self.signs:
@@ -159,7 +152,7 @@ class Sorcerer(Character):
                            "Thunder" : "60 az 70 dmg ale jen 1 použití za 3 kola",
                             "Ice Spike" : "20 až 35 dmg a zmrazení",
                             "Smite" : "50 až 60 dmg ignorujících def"}  # fireball is more effective against humans 30 if enemy.char_class != "Monster" else 20
-        
+
     def sorcerer_attacking(self):
         while True:
             time.sleep(1)
@@ -171,7 +164,7 @@ class Sorcerer(Character):
                     if choice == 1:
                         print(f"\n{Hero.name} použil útok Fire ball!!.")
                         Hero.fireball(Enemy)
-                        
+
                     elif choice == 2:
                         if round_counter  < 4:
                             print("\nBlesk můžeš použít až na 4. kole.")
@@ -214,7 +207,7 @@ class Sorcerer(Character):
         target.take_damage(fireball_attack)
         target.effects["burning"]["duration"] += 3  # Set burning duration to 3 rounds
         target.effects["burning"]["is"] = True  # Apply burning effect
-    
+
     def icespike(self, target):
         self.mana_check()
         icespike_attack = Attack(self, "Ice Spike", base_dmg=random.randint(20, 35), dmg_type="ice", effects=["frozen"])
@@ -245,19 +238,19 @@ class Archer(Character):
         self.abilities = {"Arrow Rain" : "4 až 8 krát poškodí za 10 dmg", 
                           "Poison Arrow" : "20 až 25 dmg a otrávení", 
                           "Explosive Arrow" : "60 až 80 dmg, objetování 20 až 30 hp a šance na zapálení nepřítele"}
-        
+
     def archer_attacking(self):
         while True:
             time.sleep(1)
             choice = input("\nVyber si útok (|x| - napiš x): ").strip()
             if choice.isdigit():
                 choice = int(choice)
-                
+
                 if 1 <= choice <= 3 :
                     if choice == 1:
                         print(f"\n{Hero.name} použil útok Arrow Rain!!.")
                         Hero.arrow_rain(Enemy)
-                        
+
                     elif choice == 2:
                         print(f"\n{Hero.name} použil útok Poison Arrow!!.")
                         Hero.poison_arrow(Enemy)
@@ -275,12 +268,12 @@ class Archer(Character):
             else:
                 print("Neplatná volba. Zkus to znovu.")
                 continue
-        
+
     def arrow_rain(self, target):
         self.stamina_check()
         arrow_rain_attack = Attack(self, "Arrow Rain", base_dmg=random.randint(4, 8) * 10, dmg_type="piercing", effects=None)
         target.take_damage(arrow_rain_attack)
-    
+
     def poison_arrow(self, target):
         self.stamina_check()
         poison_arrow_attack = Attack(self, "Poison Arrow", base_dmg=random.randint(20, 25), dmg_type="piercing", effects=["poisoned"])
@@ -309,19 +302,19 @@ class Jarl(Character):
         self.abilities = {"War cry" : "20 až 30 HP a 5 až 10 def",
                         "Bloody slash" : "30 až 40 dmg a silné krvácení",
                         "Battle Roar" : "- 5 až 15 nepřátelské def a šance na omráčení nepřítele pro toto a další kolo"}
-        
+
     def jarl_attacking(self):
         while True:
             time.sleep(1)
             choice = input("\nVyber si útok (|x| - napiš x): ").strip()
             if choice.isdigit():
                 choice = int(choice)
-                
+
                 if 1 <= choice <= 3 :
                     if choice == 1:
                         print(f"\n{Hero.name} použil útok War Cry!!.")
                         Hero.war_cry(Enemy)
-                        
+
                     elif choice == 2:
                         print(f"\n{Hero.name} použil útok Bloody slash!!.")
                         Hero.bloody_slash(Enemy)
@@ -339,7 +332,7 @@ class Jarl(Character):
                 print("Neplatná volba. Zkus to znovu.")
                 continue
 
-        
+
     def war_cry(self, target):
         self.stamina_check()
         self.hp += random.randint(20, 30)
@@ -359,7 +352,7 @@ class Jarl(Character):
             target.defense -= random.randint(5, 15)
         else:
             pass
-         
+
         print(f"{target.name} má nyní {target.defense} obrany.")
         if random.randint(1, 5) == 3:
             print(f"{target.name} je omráčen.")
@@ -381,20 +374,20 @@ class Bard(Character):
         self.abilities = {"Taunt" : "5 až 10 dmg, - 5 až 10 staminy a def nepříteli a 20 respektu. pokud máš více než 150 respektu máš i šanci na instakill",
                           "Power song" : "15 až 25 def a 20 až 30 staminy ",
                           "Melody of Browl" : "25 až 35 dmg a otrávení"}
-        
+
     def bard_attacking(self):
         while True:
             time.sleep(1)
             choice = input("\nVyber si útok (|x| - napiš x): ").strip()
             if choice.isdigit():
                 choice = int(choice)
-                
+
                 if 1 <= choice <= 3 :
                     if choice == 1:
                         print(f"\n{Hero.name} použil útok Taunt!!.")
                         Hero.taunt(Enemy)
                         print(f"{Enemy.name} má nyní {Enemy.stamina} staminy a {Enemy.defense} obrany.")
-                        
+
                     elif choice == 2:
                         print(f"\n{Hero.name} použil útok Power song!!.")
                         Hero.power_song(Enemy)
@@ -418,7 +411,7 @@ class Bard(Character):
         if self.respect > 150 and random.randint(1, 20) == 17:
             target.hp -= target.hp + 1
             print("Nepřítel nesnesl tvoji urážku a spadl na zem mrtví. Gratuluji urazil jsi nepřítele tak moc že to nepřežil.")
-            
+
         taunt_attack = Attack(self, "Taunt", base_dmg=random.randint(5, 10), dmg_type="slash", effects=None)
         target.take_damage(taunt_attack)
         target.stamina -= random.randint(5, 10)
@@ -446,19 +439,19 @@ class Monster(Character):
         self.abilities = {"Claw Swipe" : "2 krát 15 až 25 dmg a krvácení",
                            "Bite" : "20až 30 dmg, krvácení a otrávení",
                             "Ripping clutches" : "25 až 35 dmg a silné krvácení"}  # smash attack
-        
+
     def monster_attacking(self):
         while True:
             time.sleep(1)
             choice = input("\nVyber si útok (|x| - napiš x): ").strip()
             if choice.isdigit():
                 choice = int(choice)
-                
+
                 if 1 <= choice <= 3 :
                     if choice == 1:
                         print(f"\n{Hero.name} použil útok Claw Swipe!!.")
                         Hero.claw_swipe(Enemy)
-                        
+
                     elif choice == 2:
                         print(f"\n{Hero.name} použil útok Bite!!.")
                         Hero.bite(Enemy)
@@ -498,5 +491,3 @@ class Monster(Character):
         target.take_damage(ripping_clutches_attack)
         target.effects["bleeding"]["duration"] += 5
         target.effects["bleeding"]["is"] = True
-
-# class Dwarf

@@ -1,6 +1,4 @@
-import random
-import time
-import sys
+import random, time, sys
 alive = True
 delay = 2
 round_counter = 1
@@ -199,7 +197,7 @@ class Character:
     def apply_effects(self, h_amount, s_amount):    # možnost přidání časiového omezení efektů
         if self.effects["bleeding"]["is"] == True:
             if self.effects["bleeding"]["duration"] == 0:
-                self.effects["bleeding"]["is"] == False
+                self.effects["bleeding"]["is"] = False
             else:
                 print(f"\n{self.name} krvácí a ztrácí 10 HP.\n")
                 self.hp -= 10
@@ -210,7 +208,7 @@ class Character:
 
         if self.effects["burning"]["is"] == True:
             if self.effects["burning"]["duration"] == 0:
-                 self.effects["burning"]["is"] == False
+                 self.effects["burning"]["is"] = False
             else:
                 print(f"\n{self.name} hoří a ztrácí 15 HP.\n")
                 self.hp -= 15
@@ -221,7 +219,7 @@ class Character:
 
         if self.effects["poisoned"]["is"] == True:
             if self.effects["poisoned"]["duration"] == 0:
-                self.effects["poisoned"]["is"] == False
+                self.effects["poisoned"]["is"] = False
             else:
                 print(f"\n{self.name} je otráven a ztrácí 5 HP.\n")
                 self.hp -= 5
@@ -252,7 +250,7 @@ class Character:
         if self.effects["healing"]["is"] == True:
             if self.effects["healing"]["duration"] == 0:
                 self.h_amount = 0
-                self.effects["healing"]["is"] == False
+                self.effects["healing"]["is"] = False
             else:
                 print(f"\n{self.name} se léčí a získává {h_amount} HP.\n")
                 self.hp += h_amount
@@ -1080,8 +1078,11 @@ class Monster(Character):
 # effect shealding
 # effect cleanse
 # item Mahakam hammer
-
-
+# dinamic weather
+# armor defence degradatin 
+# repetativ texts to text.py
+# crits
+# předělat Enemy ai doplňování na samostatnou funkci
 
 
 Enemy = Character(f"{random.choice(enemy_names)}", f"{random.choice(characters)}")  # Initialize Enemy character
