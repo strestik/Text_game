@@ -2,10 +2,11 @@ import random, time, sys
 from contants import *
 from attack import *
 from base_character import *
+from h_characters import *
 
 
 Enemy = Character(f"{random.choice(enemy_names)}", f"{random.choice(characters)}")  # Initialize Enemy character
-# Enemy = Enemy.en_classing(f"{random.choice(characters)}")  
+Enemy.en_classing(f"{random.choice(characters)}")  
 
 print(f"\nVýtej hráči, tvým úkolem je přežít a porazit nepřítele.")
 print(f"\nTvím nepřítelem je {Enemy.name} {random.choice(titles)}, třída: {Enemy.char_class}, HP: {Enemy.hp}, Stamina: {Enemy.stamina}, Mana: {Enemy.mana}, Defense: {Enemy.defense}, Síla: {Enemy.skill * 100}%\n")

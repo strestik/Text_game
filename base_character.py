@@ -1,6 +1,7 @@
 import random, time, sys
 from combat import *
 from attack import *
+from h_characters import Witcher, Sorcerer, Archer, Jarl, Bard, Monster
 Hero = None  # Initialize Hero variable
 Enemy = None  # Initialize Enemy variable
 
@@ -49,7 +50,7 @@ class Character:
             # "skellige axe": {"own":False,"dmg_mutipl": 0.25},
             # "brokilon bow": {"own":False,"dmg_mutipl": 0.25},
             # "dimeritium staff": {"own":False,"dmg_mutipl": 0.25},
-            # "mahakam hammer" : {"own":False,"dmg_multiplier": 0.35}
+            # "mahakam hammer" : {"own":False,"dmg_multiplier": 0.25}
             "bomb": {"own":True,"dmg": 60, "effect": None},  # [owned, base dmg]
             "poison bomb": {"own":True,"dmg": 50, "effect": "poisoned"},  # [owned, base dmg, effect]
             "fire bomb": {"own":True,"dmg": 50, "effect": "burning"},  
