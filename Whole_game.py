@@ -4,6 +4,7 @@ delay = 2
 round_counter = 1
 Hero = None  # Initialize Hero variable
 Enemy = None  # Initialize Enemy variable
+
 # Global variable to track if the game is alive
 titles = [
     "Neporazitelný",
@@ -101,7 +102,7 @@ class Attack:
 class Character:
     def __init__(self, name, char_class,):
         self.is_alive = True
-        self.bck = False
+        # self.bck = False
         self.name = name
         self.char_class = char_class 
         self.hp = 100
@@ -125,6 +126,13 @@ class Character:
                         "cleanse" : {"is" : False, "duration" : 0}
                         }
         self.elixiers = {
+            # AI Ideas
+                    # "white honey": {"own": 1, "amount": 0, "duration": 0},  # cleanses all effects
+                    # "thunderbolt": {"own": 1, "amount": 0.25, "duration": 4},  # skill multiplier
+                    # "cat": {"own": 1, "amount": 0.15, "duration": 4},  # defense multiplier
+                    # "swallow": {"own": 1, "amount": 0.25, "duration": 4},  # healing multiplier
+                    # "white gull": {"own": 1, "amount": 0.25, "duration": 4},  # mana multiplier
+                    # "black blood": {"own": 1, "amount": 0.25, "duration": 4},  # defense against monsters
             "healing potion": {"own": 3,"amount": 50},
             "stamina potion": {"own": 3,"amount": 45},
             "mana potion": {"own": 3,"amount": 35}, 
@@ -151,28 +159,23 @@ class Character:
 
     def is_alive_check(self):
         self.is_alive = False if self.hp <= 0 else True
-        if not self.is_alive:
-            time.sleep(1)
-            print(f"\n{self.name} byl poražen!!")
-            global alive
+        global alive
+        if not Hero.is_alive:
+            print(f"{Hero.name} byl poražen! Konec hry.\n")
             alive = False
-            if not Hero.is_alive:
-                print(f"{Hero.name} byl poražen! Konec hry.\n")
-                alive = False
-                sys.exit(0)
-            if not Enemy.is_alive:
-                print(f"{Enemy.name} byl poražen!!! Gratuluji!\n")
-                alive = False
-                sys.exit(0)
 
-    def mana_check(self):
+        if not Enemy.is_alive:
+            print(f"{Enemy.name} byl poražen!!! Gratuluji!\n")
+            alive = False
+
+    def mana_check(self, mana_cost):
         if self.mana < 20:
             print("Nemáš dost many!")
             return
         else:
             self.mana -= 20
 
-    def stamina_check(self):
+    def stamina_check(self, stamina_cost):
         if self.stamina < 20:
             print("Nemáš dost staminy!")
             return
@@ -586,6 +589,12 @@ class Character:
 
 
 
+
+
+
+
+
+
 class Witcher(Character):
     def __init__(self, name):
         super().__init__(name, "Witcher")
@@ -612,11 +621,11 @@ class Witcher(Character):
                 choice = int(choice)
 
                 if 1 <= choice <= 2 :
-                    if choice == 1:
+                    if choice == 2:
                         print(f"\n{Hero.name} použil útok Silver Sword.")
                         Hero.silver_sword(Enemy)
 
-                    elif choice == 2:
+                    elif choice == 1:
                         print(f"\n{Hero.name} použil útok Steel Sword.")
                         Hero.steel_sword(Enemy)
 
@@ -994,6 +1003,14 @@ class Bard(Character):
             target.hp -= target.hp + 1
             print("Nepřítel nesnesl tvoji urážku a spadl na zem mrtví. Gratuluji urazil jsi nepřítele tak moc že to nepřežil.")
 
+        if self.respect > 200 and random.randint(1, 15) == 7:
+            target.hp -= target.hp + 1
+            print("Nepřítel nesnesl tvoji urážku a spadl na zem mrtví. Gratuluji urazil jsi nepřítele tak moc že to nepřežil.")
+
+        if self.respect > 250 and random.randint(1, 10) == 3:
+            target.hp -= target.hp + 1
+            print("Nepřítel nesnesl tvoji urážku a spadl na zem mrtví. Gratuluji urazil jsi nepřítele tak moc že to nepřežil.")
+
         taunt_attack = Attack(self, "Taunt", base_dmg=random.randint(5, 10), dmg_type="slash", effects=None)
         target.take_damage(taunt_attack)
         target.stamina -= random.randint(5, 10)
@@ -1074,15 +1091,36 @@ class Monster(Character):
         target.effects["bleeding"]["duration"] += 5
         target.effects["bleeding"]["is"] = True
 
+
+
+# // TODO //
 # class Dwarf
 # effect shealding
 # effect cleanse
 # item Mahakam hammer
 # dinamic weather
 # armor defence degradatin 
-# repetativ texts to text.py
 # crits
+# melting útok nebo něco, aplikuje hoření a sníží defense nebo roztaví zbraň tedy zmenší multiplaier etc. etc
+# class Vapmire
+# effect "energy loss" (ps. change to better name), vampire, lossing mana or stamina etc.
+# možnost zakínačských škol
+# přezdívky mění schopnosti postav dle jejich sémantického významau, např. {Hero.name} "The Coward" - snižuje sílu o 10% a def o 5 etc.
+# damage_type make some usability, damage difrences against difrent armors, oponents, etc.
+# mana and stamina cost difer between attacks and characters 
+
+
+# // FIXME //
+# přidat Enemy ai vynucené léčení pokud má méně než 1/5 HP, s malou šancí na neléčení pro možnost zabití a neumožnění nekonečného cyklu hitování a léčení
+# repetativ texts to text.py
 # předělat Enemy ai doplňování na samostatnou funkci
+# přeělat útoky a takové funkce tak aby byly separátně od charakterů a při každém volání byla použita specifikace kdo útoční
+
+
+# // BUG //
+# bomb effects dont work 
+# after atemt to use used bomb and then using not used bomb, program contiue to ask you to chose another item when it should continue
+
 
 
 Enemy = Character(f"{random.choice(enemy_names)}", f"{random.choice(characters)}")  # Initialize Enemy character
@@ -1114,7 +1152,7 @@ print(f"\nNyní můžeš začít hrát.")
 time.sleep(2)
 print("Boj začínáš bez vybavení a vylepšení, jestli chceš použít meč nebo vypít lektvar, musíš na to využít kolo.")
 time.sleep(2)
-print(f"Poškození způsobuješ díky síle útoků násobenou vlastní silou -> {Hero.skill * 100}%")
+print(f"Poškození způsobuješ díky síle útoků násobenou vlastní silou -> {Hero.skill * 100}% účinnost")
 time.sleep(2)
 print("Ale neměj strách, protivník se připravuje, takže první dvě kola na tebe nezaútočí.")
 
@@ -1158,7 +1196,8 @@ while alive:
 
 
                     elif Hero.char_class == "Witcher" :
-                        print(f"Jako zaklínač jsi velmi schopný bojovník s mečem i magií, proto máš {Hero.skill * 100}% síly.\n")
+                        if round_counter < 2:
+                            print(f"Jako zaklínač jsi velmi schopný bojovník s mečem i magií, proto máš {Hero.skill * 100}% síly.\n")
                         print(f"Tvé schopnosti jsou: ")
                         for x, (ability) in enumerate(Hero.abilities):
                             print(f"|{x +1}|{ability} : {Hero.abilities[ability]}")
