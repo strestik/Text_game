@@ -1108,6 +1108,7 @@ class Monster(Character):
 # přezdívky mění schopnosti postav dle jejich sémantického významau, např. {Hero.name} "The Coward" - snižuje sílu o 10% a def o 5 etc.
 # damage_type make some usability, damage difrences against difrent armors, oponents, etc.
 # mana and stamina cost difer between attacks and characters 
+# add some ASCII art
 
 
 # // FIXME //
